@@ -1,29 +1,26 @@
 package src.main.java.fr.insa.ot3.communication;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.net.ServerSocket;
 import java.util.List;
 
 import com.m5c.safesockets.BreakdownObserver;
-import com.m5c.safesockets.MessageObserver;
 import com.m5c.safesockets.SafeSocket;
 
-public class Server 
+public class Server extends Side
 {
 	private List<SafeSocket> sockets;
-	
-	private Collection<MessageObserver> mess;
-	private Collection<BreakdownObserver> breakdown;
-	
-	private static int HEART_BEAT_RATE = 2000;
-	private static int TIMEOUT = 500;
+	private ServerSocket servSock;
 	
 	public Server()
 	{
-		sockets = new LinkedList<SafeSocket>();
+		super();
+		try {
+			servSock = new ServerSocket(8080);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		mess.add(new MessageManager());
 		breakdown.add(new ServerBreak());
 	}
 	
@@ -33,7 +30,7 @@ public class Server
 		while(true)
 		{
 			try {
-				SafeSocket s = new SafeSocket(8080, HEART_BEAT_RATE, TIMEOUT, mess, breakdown);
+				SafeSocket s = new SafeSocket(servSock, HEART_BEAT_RATE, TIMEOUT, mess, breakdown);
 				sockets.add(s);
 			} catch (IOException e) {
 				e.printStackTrace();

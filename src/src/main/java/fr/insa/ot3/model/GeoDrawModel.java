@@ -5,6 +5,9 @@
  */
 package src.main.java.fr.insa.ot3.model;
 
+import src.main.java.fr.insa.ot3.communication.message.Message;
+import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
+
 import com.google.gson.Gson;
 
 /**
@@ -37,6 +40,17 @@ public class GeoDrawModel
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(trace);
+        
+        System.out.println(jsonString);
+        
+        TraceMessage t = new TraceMessage(trace);
+        jsonString = gson.toJson(t);
+        System.out.println(jsonString);
+        
+        Message tt = Message.parseMessage(jsonString);
+
+        System.out.println(tt.getId());
+        jsonString = gson.toJson(tt);
         System.out.println(jsonString);
     }
 
