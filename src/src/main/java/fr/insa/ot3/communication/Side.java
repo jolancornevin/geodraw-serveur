@@ -2,6 +2,10 @@ package src.main.java.fr.insa.ot3.communication;
 
 import java.util.Collection;
 
+import src.main.java.fr.insa.ot3.communication.message.GameList;
+import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
+import src.main.java.fr.insa.ot3.communication.message.JoinGame;
+import src.main.java.fr.insa.ot3.communication.message.NewGame;
 import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
 
 import com.m5c.safesockets.BreakdownObserver;
@@ -18,9 +22,17 @@ public abstract class Side
 	
 	public Side()
 	{
-		mess.add(new MessageManager());
+		mess.add(new MessageManager(this));
 	}
 	
 	abstract void HandleTraceMessage(TraceMessage m);
+
+	abstract void HandleGameList(GameList m);
+
+	abstract void HandleGameListRequest(GameListRequest m);
+
+	abstract void HandleJoinGame(JoinGame m);
+
+	abstract void HandleNewGame(NewGame m);
 	
 }

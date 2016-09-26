@@ -36,11 +36,24 @@ public class Message
 	}
 	
 	enum Type{
-		TRACE
+		TRACE,
+		NEWGAME,
+		
+		GAMELIST,
+		GAMELISTREQUEST,
+		
+		JOINGAME
 	}
 	
 	static
 	{
 		messagesTypes.put(Type.TRACE.ordinal(), TraceMessage.class);
+		
+		messagesTypes.put(Type.NEWGAME.ordinal(), NewGame.class);
+
+		messagesTypes.put(Type.GAMELIST.ordinal(), GameList.class);
+		messagesTypes.put(Type.GAMELISTREQUEST.ordinal(), GameListRequest.class);
+
+		messagesTypes.put(Type.JOINGAME.ordinal(), JoinGame.class);
 	}
 }

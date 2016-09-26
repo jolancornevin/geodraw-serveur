@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
+import src.main.java.fr.insa.ot3.communication.message.GameList;
+import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
+import src.main.java.fr.insa.ot3.communication.message.JoinGame;
 import src.main.java.fr.insa.ot3.communication.message.Message;
+import src.main.java.fr.insa.ot3.communication.message.NewGame;
 import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
 import src.main.java.fr.insa.ot3.utils.Utils;
 
@@ -19,13 +23,15 @@ public class Server extends Side
 	public Server()
 	{
 		super();
+		
+		breakdown.add(new ServerBreak());
+		
 		try {
 			servSock = new ServerSocket(8080);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		breakdown.add(new ServerBreak());
 	}
 	
 	public void startServer()
@@ -62,6 +68,30 @@ public class Server extends Side
 
 	@Override
 	void HandleTraceMessage(TraceMessage m) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	void HandleGameList(GameList m) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	void HandleGameListRequest(GameListRequest m) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	void HandleJoinGame(JoinGame m) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	void HandleNewGame(NewGame m) {
 		// TODO Auto-generated method stub
 		
 	}
