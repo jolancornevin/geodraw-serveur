@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
+import src.main.java.fr.insa.ot3.communication.message.Message;
+import src.main.java.fr.insa.ot3.utils.Utils;
+
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
 
@@ -37,6 +40,13 @@ public class Server extends Side
 			}
 			
 		}
+	}
+	
+	public void sendMessageToAll(Message m)
+	{
+		String jsonstr = Utils.gson.toJson(m);
+		for(SafeSocket s : sockets)
+			s.sendMessage(jsonstr);
 	}
 	
 	class ServerBreak implements BreakdownObserver

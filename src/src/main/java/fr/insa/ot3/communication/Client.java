@@ -2,6 +2,9 @@ package src.main.java.fr.insa.ot3.communication;
 
 import java.io.IOException;
 
+import src.main.java.fr.insa.ot3.communication.message.Message;
+import src.main.java.fr.insa.ot3.utils.Utils;
+
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
 
@@ -25,6 +28,14 @@ public class Client extends Side
 		
 
 		breakdown.add(new ClientBreak());
+	}
+	
+
+	
+	public boolean sendMessage(Message m)
+	{
+		String jsonstr = Utils.gson.toJson(m);
+		return socket.sendMessage(jsonstr);
 	}
 	
 	public void disconnect()
