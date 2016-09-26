@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.util.List;
 
 import src.main.java.fr.insa.ot3.communication.message.Message;
+import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
 import src.main.java.fr.insa.ot3.utils.Utils;
 
 import com.m5c.safesockets.BreakdownObserver;
@@ -56,6 +57,12 @@ public class Server extends Side
 		{
 			sockets.remove(sock);
 		}
+		
+	}
+
+	@Override
+	void HandleTraceMessage(TraceMessage m) {
+		// TODO Auto-generated method stub
 		
 	}
 }

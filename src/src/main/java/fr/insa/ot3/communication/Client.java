@@ -3,6 +3,7 @@ package src.main.java.fr.insa.ot3.communication;
 import java.io.IOException;
 
 import src.main.java.fr.insa.ot3.communication.message.Message;
+import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
 import src.main.java.fr.insa.ot3.utils.Utils;
 
 import com.m5c.safesockets.BreakdownObserver;
@@ -60,6 +61,12 @@ public class Client extends Side
 			if(!intended)
 				reconnect();
 		}
+		
+	}
+
+	@Override
+	void HandleTraceMessage(TraceMessage m) {
+		// TODO Auto-generated method stub
 		
 	}
 	

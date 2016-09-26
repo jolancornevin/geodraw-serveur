@@ -30,6 +30,8 @@ public class Message
 	public static Message parseMessage(String message)
 	{
 		Message m = Utils.gson.fromJson(message, Message.class);
+		if(!messagesTypes.containsKey(m.getId()))
+			return m;
 		return Utils.gson.fromJson(message, messagesTypes.get(m.getId()));
 	}
 	
