@@ -1,6 +1,7 @@
 package src.main.java.fr.insa.ot3.communication;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import src.main.java.fr.insa.ot3.communication.message.GameList;
 import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
@@ -22,6 +23,8 @@ public abstract class Side
 	
 	public Side()
 	{
+		mess = new LinkedList<MessageObserver>();
+		breakdown = new LinkedList<BreakdownObserver>();
 		mess.add(new MessageManager(this));
 	}
 	

@@ -5,6 +5,8 @@
  */
 package src.main.java.fr.insa.ot3.model;
 
+import src.main.java.fr.insa.ot3.communication.Client;
+import src.main.java.fr.insa.ot3.communication.Server;
 import src.main.java.fr.insa.ot3.communication.message.Message;
 import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
 
@@ -38,20 +40,39 @@ public class GeoDrawModel
         trace.addSegment(segment1);
         trace.addSegment(segment2);
         
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(trace);
+//        Gson gson = new Gson();
+//        String jsonString = gson.toJson(trace);
+//        
+//        System.out.println(jsonString);
+//        
+//        TraceMessage t = new TraceMessage(trace);
+//        jsonString = gson.toJson(t);
+//        System.out.println(jsonString);
+//        
+//        Message tt = Message.parseMessage(jsonString);
+//
+//        System.out.println(tt.getId());
+//        jsonString = gson.toJson(tt);
+//        System.out.println(jsonString);
         
-        System.out.println(jsonString);
-        
-        TraceMessage t = new TraceMessage(trace);
-        jsonString = gson.toJson(t);
-        System.out.println(jsonString);
-        
-        Message tt = Message.parseMessage(jsonString);
+//        Server s = new Server();
 
-        System.out.println(tt.getId());
-        jsonString = gson.toJson(tt);
-        System.out.println(jsonString);
+    	Server s = new Server();
+    	s.start();
+    	
+    	try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	Client c = new Client("localhost", 8080);
+    	c.sendMessage(new TraceMessage(trace));
+    	
+    	c.disconnect();
+    	s.stop();
+    	
     }
 
 }

@@ -71,7 +71,7 @@ public class Client extends Side
 
 	@Override
 	void HandleTraceMessage(TraceMessage m) {
-		// TODO Auto-generated method stub
+		System.out.println(Utils.gson.toJson(m.getTrace()));
 		
 	}
 
