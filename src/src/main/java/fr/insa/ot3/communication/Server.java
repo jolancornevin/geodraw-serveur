@@ -1,6 +1,7 @@
 package src.main.java.fr.insa.ot3.communication;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -39,13 +40,13 @@ public class Server extends Side
 	{
 		Server s;
 		
-		try{
-			String serverSave = Utils.readFile("./server.json", Charset.defaultCharset());
-			s = Utils.gson.fromJson(serverSave, Server.class);
-		} catch(Exception e)
-		{
+//		try{
+//			String serverSave = Utils.readFile("./server.json", Charset.defaultCharset());
+//			s = Utils.gson.fromJson(serverSave, Server.class);
+//		} catch(Exception e)
+//		{
 			s = new Server();
-		}
+//		}
 		
 		s.start();
 		
@@ -53,6 +54,18 @@ public class Server extends Side
 		sc.nextLine();
 		
 		s.stop();
+		
+		String serverSave = Utils.gson.toJson(s);
+		
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter("./server.json", "UTF-8");
+			writer.print(serverSave);
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	
