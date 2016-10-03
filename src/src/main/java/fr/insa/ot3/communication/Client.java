@@ -70,37 +70,31 @@ public class Client extends Side
 	}
 
 	@Override
-	void HandleTraceMessage(TraceMessage m) {
+	void HandleTraceMessage(TraceMessage m, SafeSocket sender) {
 		System.out.println(Utils.gson.toJson(m.getTrace()));
 		
 	}
 
 
 	@Override
-	void HandleGameList(GameList m) {
+	void HandleGameList(GameList m, SafeSocket sender) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
+	/** Server method*/
 	@Override
-	void HandleGameListRequest(GameListRequest m) {
-		// TODO Auto-generated method stub
-		
-	}
+	void HandleGameListRequest(GameListRequest m, SafeSocket sender) {return;}
 
 
+	/** Server method*/
 	@Override
-	void HandleJoinGame(JoinGame m) {
-		// TODO Auto-generated method stub
-		
-	}
+	void HandleJoinGame(JoinGame m, SafeSocket sender) {return;}
 
 
+	/** Server method*/
 	@Override
-	void HandleNewGame(NewGame m) {
-		// TODO Auto-generated method stub
-		
-	}
+	void HandleNewGame(NewGame m, SafeSocket sender) {return;}
 	
 }

@@ -5,12 +5,13 @@
  */
 package src.main.java.fr.insa.ot3.model;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import src.main.java.fr.insa.ot3.communication.Client;
 import src.main.java.fr.insa.ot3.communication.Server;
-import src.main.java.fr.insa.ot3.communication.message.Message;
-import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
-
-import com.google.gson.Gson;
+import src.main.java.fr.insa.ot3.communication.message.NewGame;
+import src.main.java.fr.insa.ot3.utils.Utils;
 
 /**
  *
@@ -57,7 +58,22 @@ public class GeoDrawModel
         
 //        Server s = new Server();
 
+        Calendar cal = Calendar.getInstance();
+        Date start = cal.getTime();
+        cal.add(Calendar.HOUR, 2);
+        Date end = cal.getTime();
+//        
+//        Game g = new Game(0, "patate", false, 0, 15, start, end, "Les avions");
+//        Game g2 = new Game(1, "patate", false, 0, 15, start, end, "Les avions");
+//        
+//        g2.addPlayer("bob");
+//        g2.addPlayer("alice");
+//        System.out.println(Utils.gson.toJson(g));
+//        System.out.println(Utils.gson.toJson(g2));
+//        
     	Server s = new Server();
+//        System.out.println(Utils.gson.toJson(s));
+
     	s.start();
     	
     	try {
@@ -68,10 +84,14 @@ public class GeoDrawModel
 		}
     	
     	Client c = new Client("localhost", 8080);
-    	c.sendMessage(new TraceMessage(trace));
+    	c.sendMessage(new NewGame("patate", false, 15, start, end, "Les avions", "franck"));
     	
     	c.disconnect();
     	s.stop();
+    	String jsonstr = Utils.gson.toJson(s);
+    	
+    	Server s2 = Utils.gson.fromJson(jsonstr, Server.class);
+    	System.out.println(Utils.gson.toJson(s2));
     	
     }
 

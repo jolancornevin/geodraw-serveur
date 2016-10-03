@@ -25,15 +25,15 @@ public class MessageManager implements MessageObserver
 		Message m = Message.parseMessage(message);
 		
 		if(m instanceof TraceMessage)
-			side.HandleTraceMessage((TraceMessage) m);
+			side.HandleTraceMessage((TraceMessage) m, sock);
 		else if(m instanceof GameList)
-			side.HandleGameList((GameList) m);
+			side.HandleGameList((GameList) m, sock);
 		else if(m instanceof GameListRequest)
-			side.HandleGameListRequest((GameListRequest) m);
+			side.HandleGameListRequest((GameListRequest) m, sock);
 		else if(m instanceof JoinGame)
-			side.HandleJoinGame((JoinGame) m);
+			side.HandleJoinGame((JoinGame) m, sock);
 		else if(m instanceof NewGame)
-			side.HandleNewGame((NewGame) m);
+			side.HandleNewGame((NewGame) m, sock);
 		else
 		{
 			//if there was an error

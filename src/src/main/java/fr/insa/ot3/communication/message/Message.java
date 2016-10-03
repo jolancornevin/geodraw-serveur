@@ -42,7 +42,10 @@ public class Message
 		GAMELIST,
 		GAMELISTREQUEST,
 		
-		JOINGAME
+		JOINGAME,
+		JOINEDGAME,
+		
+		GAMEUPDATE
 	}
 	
 	static
@@ -55,5 +58,8 @@ public class Message
 		messagesTypes.put(Type.GAMELISTREQUEST.ordinal(), GameListRequest.class);
 
 		messagesTypes.put(Type.JOINGAME.ordinal(), JoinGame.class);
+		messagesTypes.put(Type.JOINEDGAME.ordinal(), JoinedGame.class);
+
+		messagesTypes.put(Type.GAMEUPDATE.ordinal(), GameUpdate.class);
 	}
 }
