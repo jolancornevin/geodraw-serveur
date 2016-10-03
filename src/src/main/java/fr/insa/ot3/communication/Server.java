@@ -2,11 +2,13 @@ package src.main.java.fr.insa.ot3.communication;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import src.main.java.fr.insa.ot3.communication.message.GameList;
 import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
@@ -33,10 +35,29 @@ public class Server extends Side
 	
 	private int id = 0;
 
-	public Collection<Game> getGameList() {
-		return gameList.values();
+	public static void main(String[] args)
+	{
+		Server s;
+		
+		try{
+			String serverSave = Utils.readFile("./server.json", Charset.defaultCharset());
+			s = Utils.gson.fromJson(serverSave, Server.class);
+		} catch(Exception e)
+		{
+			s = new Server();
+		}
+		
+		s.start();
+		
+		Scanner sc = new Scanner(System.in);
+		sc.nextLine();
+		
+		s.stop();
 	}
 
+	
+	
+	
 	public Server()
 	{
 		super();
@@ -53,6 +74,10 @@ public class Server extends Side
 			e.printStackTrace();
 		}
 
+	}
+	
+	public Collection<Game> getGameList() {
+		return gameList.values();
 	}
 	
 	private transient boolean interrupted = false;
@@ -146,7 +171,7 @@ public class Server extends Side
 			gameList.get(m.getGameID()).updateTrace(m.getPlayerID(), m.getTrace());
 	}
 
-	/** Client function */
+	/** Client method */
 	@Override
 	void HandleGameList(GameList m, SafeSocket sender) {return;}
 
@@ -170,6 +195,11 @@ public class Server extends Side
 			sendMessageTo(sender, new JoinedGame(g.addPlayer(m.getPlayerID())));
 	}
 
+	/** Client method */
+	@Override
+	void HandleJoinedGame(JoinedGame m, SafeSocket sender) {return;}
+
+	
 	@Override
 	void HandleNewGame(NewGame m, SafeSocket sender) {
 		int gID = id;
@@ -193,4 +223,5 @@ public class Server extends Side
 			gameSubscribers.get(gameID).add(s);
 		}
 	}
+
 }

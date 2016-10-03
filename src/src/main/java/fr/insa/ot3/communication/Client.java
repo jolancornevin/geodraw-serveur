@@ -5,6 +5,7 @@ import java.io.IOException;
 import src.main.java.fr.insa.ot3.communication.message.GameList;
 import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
 import src.main.java.fr.insa.ot3.communication.message.JoinGame;
+import src.main.java.fr.insa.ot3.communication.message.JoinedGame;
 import src.main.java.fr.insa.ot3.communication.message.Message;
 import src.main.java.fr.insa.ot3.communication.message.NewGame;
 import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
@@ -93,8 +94,16 @@ public class Client extends Side
 	void HandleJoinGame(JoinGame m, SafeSocket sender) {return;}
 
 
+	@Override
+	void HandleJoinedGame(JoinedGame m, SafeSocket sender) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/** Server method*/
 	@Override
 	void HandleNewGame(NewGame m, SafeSocket sender) {return;}
+
+
 	
 }

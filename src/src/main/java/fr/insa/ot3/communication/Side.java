@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import src.main.java.fr.insa.ot3.communication.message.GameList;
 import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
 import src.main.java.fr.insa.ot3.communication.message.JoinGame;
+import src.main.java.fr.insa.ot3.communication.message.JoinedGame;
 import src.main.java.fr.insa.ot3.communication.message.NewGame;
 import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
 
@@ -37,6 +38,8 @@ public abstract class Side
 
 	abstract void HandleJoinGame(JoinGame m, SafeSocket sender);
 
+	abstract void HandleJoinedGame(JoinedGame m, SafeSocket sender);
+	
 	abstract void HandleNewGame(NewGame m, SafeSocket sender);
 	
 }
