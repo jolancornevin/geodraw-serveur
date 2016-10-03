@@ -1,14 +1,15 @@
-package src.main.java.fr.insa.ot3.communication;
+package main.java.fr.insa.ot3.communication;
 
-import src.main.java.fr.insa.ot3.communication.message.AddLatLng;
-import src.main.java.fr.insa.ot3.communication.message.GameList;
-import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
-import src.main.java.fr.insa.ot3.communication.message.GameUpdate;
-import src.main.java.fr.insa.ot3.communication.message.JoinGame;
-import src.main.java.fr.insa.ot3.communication.message.JoinedGame;
-import src.main.java.fr.insa.ot3.communication.message.Message;
-import src.main.java.fr.insa.ot3.communication.message.NewGame;
-import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
+import main.java.fr.insa.ot3.communication.message.AddLatLng;
+import main.java.fr.insa.ot3.communication.message.GameList;
+import main.java.fr.insa.ot3.communication.message.GameListRequest;
+import main.java.fr.insa.ot3.communication.message.GameUpdate;
+import main.java.fr.insa.ot3.communication.message.JoinGame;
+import main.java.fr.insa.ot3.communication.message.JoinedGame;
+import main.java.fr.insa.ot3.communication.message.Message;
+import main.java.fr.insa.ot3.communication.message.NewGame;
+import main.java.fr.insa.ot3.communication.message.TraceMessage;
+import main.java.fr.insa.ot3.communication.message.Vote;
 
 import com.m5c.safesockets.MessageObserver;
 import com.m5c.safesockets.SafeSocket;
@@ -50,6 +51,9 @@ public class MessageManager implements MessageObserver
 		
 		else if(m instanceof JoinedGame)
 			side.HandleJoinedGame((JoinedGame) m, sock);
+
+		else if(m instanceof Vote)
+			side.HandleVote((Vote) m, sock);
 		else
 		{
 			//if there was an error

@@ -1,4 +1,4 @@
-package src.main.java.fr.insa.ot3.model;
+package main.java.fr.insa.ot3.model;
 
 /**
  * Respresents  a single GPS fix

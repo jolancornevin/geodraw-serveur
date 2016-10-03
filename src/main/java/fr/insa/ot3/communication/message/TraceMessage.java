@@ -1,6 +1,6 @@
-package src.main.java.fr.insa.ot3.communication.message;
+package main.java.fr.insa.ot3.communication.message;
 
-import src.main.java.fr.insa.ot3.model.Drawing;
+import main.java.fr.insa.ot3.model.Drawing;
 
 public class TraceMessage extends Message
 {

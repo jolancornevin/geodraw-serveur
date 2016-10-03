@@ -1,8 +1,8 @@
-package src.main.java.fr.insa.ot3.communication.message;
+package main.java.fr.insa.ot3.communication.message;
 
 import java.util.HashMap;
 
-import src.main.java.fr.insa.ot3.utils.Utils;
+import main.java.fr.insa.ot3.utils.Utils;
 
 
 public class Message 
@@ -46,7 +46,10 @@ public class Message
 		JOINGAME,
 		JOINEDGAME,
 		
-		GAMEUPDATE
+		GAMEUPDATE,
+		
+		VOTE,
+		GAMERESULT
 		//TODO Vote
 		//TODO trace update incremental (not full)
 	}
@@ -65,5 +68,7 @@ public class Message
 		messagesTypes.put(Type.JOINEDGAME.ordinal(), JoinedGame.class);
 
 		messagesTypes.put(Type.GAMEUPDATE.ordinal(), GameUpdate.class);
+
+		messagesTypes.put(Type.VOTE.ordinal(), Vote.class);
 	}
 }

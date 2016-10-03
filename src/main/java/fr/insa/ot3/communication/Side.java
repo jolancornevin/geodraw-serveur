@@ -1,16 +1,17 @@
-package src.main.java.fr.insa.ot3.communication;
+package main.java.fr.insa.ot3.communication;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
-import src.main.java.fr.insa.ot3.communication.message.AddLatLng;
-import src.main.java.fr.insa.ot3.communication.message.GameList;
-import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
-import src.main.java.fr.insa.ot3.communication.message.GameUpdate;
-import src.main.java.fr.insa.ot3.communication.message.JoinGame;
-import src.main.java.fr.insa.ot3.communication.message.JoinedGame;
-import src.main.java.fr.insa.ot3.communication.message.NewGame;
-import src.main.java.fr.insa.ot3.communication.message.TraceMessage;
+import main.java.fr.insa.ot3.communication.message.AddLatLng;
+import main.java.fr.insa.ot3.communication.message.GameList;
+import main.java.fr.insa.ot3.communication.message.GameListRequest;
+import main.java.fr.insa.ot3.communication.message.GameUpdate;
+import main.java.fr.insa.ot3.communication.message.JoinGame;
+import main.java.fr.insa.ot3.communication.message.JoinedGame;
+import main.java.fr.insa.ot3.communication.message.NewGame;
+import main.java.fr.insa.ot3.communication.message.TraceMessage;
+import main.java.fr.insa.ot3.communication.message.Vote;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.MessageObserver;
@@ -47,5 +48,7 @@ public abstract class Side
 	abstract void HandleJoinedGame(JoinedGame m, SafeSocket sender);
 	
 	abstract void HandleNewGame(NewGame m, SafeSocket sender);
+	
+	abstract void HandleVote(Vote m, SafeSocket sender);
 	
 }

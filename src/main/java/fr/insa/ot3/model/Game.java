@@ -1,4 +1,4 @@
-package src.main.java.fr.insa.ot3.model;
+package main.java.fr.insa.ot3.model;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class Game {
     private final Date endDate;
     private final String theme;
 
-    private final List<String> players;
+    private final Map<String, Integer> players;
     private final Map<String, Drawing> traces;
     
     private int currentNbPlayer;
@@ -36,7 +36,7 @@ public class Game {
         
         this.id = id;
         
-        players = new LinkedList<String>();
+        players = new HashMap<String, Integer>();
         traces = new HashMap<String, Drawing>();
     }
 
@@ -64,9 +64,9 @@ public class Game {
     public boolean addPlayer(String playerID) {
         if(currentNbPlayer < maxNbPlayer)
         {
-        	if(players.contains(playerID))
+        	if(players.containsKey(playerID))
         		return true;
-        	players.add(playerID);
+        	players.put(playerID, 0);
         	currentNbPlayer++;
         	return true;
         }
@@ -74,7 +74,7 @@ public class Game {
     }
     
     public void removePlayer(String playerID) {
-    	if(players.contains(playerID))
+    	if(players.containsKey(playerID))
     	{
     		players.remove(playerID);
     		currentNbPlayer--;

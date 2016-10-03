@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package src.main.java.fr.insa.ot3.model;
+package main.java.fr.insa.ot3.model;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import src.main.java.fr.insa.ot3.communication.Client;
-import src.main.java.fr.insa.ot3.communication.Server;
-import src.main.java.fr.insa.ot3.communication.message.NewGame;
-import src.main.java.fr.insa.ot3.utils.Utils;
+import main.java.fr.insa.ot3.communication.Client;
+import main.java.fr.insa.ot3.communication.Server;
+import main.java.fr.insa.ot3.communication.message.NewGame;
+import main.java.fr.insa.ot3.utils.Utils;
 
 /**
  *

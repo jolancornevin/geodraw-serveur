@@ -1,4 +1,4 @@
-package src.main.java.fr.insa.ot3.utils;
+package main.java.fr.insa.ot3.utils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
