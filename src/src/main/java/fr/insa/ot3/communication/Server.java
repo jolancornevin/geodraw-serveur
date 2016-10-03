@@ -40,16 +40,17 @@ public class Server extends Side
 	{
 		Server s;
 		
-//		try{
-//			String serverSave = Utils.readFile("./server.json", Charset.defaultCharset());
-//			s = Utils.gson.fromJson(serverSave, Server.class);
-//		} catch(Exception e)
-//		{
+		try{
+			String serverSave = Utils.readFile("./server.json", Charset.defaultCharset());
+			s = Utils.gson.fromJson(serverSave, Server.class);
+		} catch(Exception e)
+		{
 			s = new Server();
-//		}
+		}
 		
 		s.start();
 		
+		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(System.in);
 		sc.nextLine();
 		
