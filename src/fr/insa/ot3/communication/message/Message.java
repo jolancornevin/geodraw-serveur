@@ -1,8 +1,8 @@
-package main.java.fr.insa.ot3.communication.message;
+package fr.insa.ot3.communication.message;
 
 import java.util.HashMap;
 
-import main.java.fr.insa.ot3.utils.Utils;
+import fr.insa.ot3.utils.Utils;
 
 
 public class Message 

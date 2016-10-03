@@ -1,6 +1,6 @@
-package main.java.fr.insa.ot3.communication.message;
+package fr.insa.ot3.communication.message;
 
-import main.java.fr.insa.ot3.model.LatLng;
+import fr.insa.ot3.model.LatLng;
 
 public class AddLatLng extends Message{
 	
