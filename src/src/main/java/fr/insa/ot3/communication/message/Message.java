@@ -37,6 +37,7 @@ public class Message
 	
 	enum Type{
 		TRACE,
+		ADDLATLNG,
 		NEWGAME,
 		
 		GAMELIST,
@@ -46,11 +47,14 @@ public class Message
 		JOINEDGAME,
 		
 		GAMEUPDATE
+		//TODO Vote
+		//TODO trace update incremental (not full)
 	}
 	
 	static
 	{
 		messagesTypes.put(Type.TRACE.ordinal(), TraceMessage.class);
+		messagesTypes.put(Type.ADDLATLNG.ordinal(), AddLatLng.class);
 		
 		messagesTypes.put(Type.NEWGAME.ordinal(), NewGame.class);
 

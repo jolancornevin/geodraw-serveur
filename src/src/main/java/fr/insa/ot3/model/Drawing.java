@@ -25,6 +25,18 @@ public class Drawing {
         return trace;
     }
     
+    public void addLatLng(LatLng latLng, boolean drawing)
+    {
+    	if(!drawing)
+    	{
+    		if(trace.size() > 0 && trace.get(trace.size()-1).getSegment().size() > 0)
+    			addSegment(new Segment());
+    		return;
+    	}
+    	if(trace.size() == 0)
+    		addSegment(new Segment());
+    	trace.get(trace.size()-1).addLatLng(latLng);
+    }
     
     
 }

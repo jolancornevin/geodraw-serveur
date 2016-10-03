@@ -2,8 +2,10 @@ package src.main.java.fr.insa.ot3.communication;
 
 import java.io.IOException;
 
+import src.main.java.fr.insa.ot3.communication.message.AddLatLng;
 import src.main.java.fr.insa.ot3.communication.message.GameList;
 import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
+import src.main.java.fr.insa.ot3.communication.message.GameUpdate;
 import src.main.java.fr.insa.ot3.communication.message.JoinGame;
 import src.main.java.fr.insa.ot3.communication.message.JoinedGame;
 import src.main.java.fr.insa.ot3.communication.message.Message;
@@ -103,6 +105,22 @@ public class Client extends Side
 	/** Server method*/
 	@Override
 	void HandleNewGame(NewGame m, SafeSocket sender) {return;}
+
+
+
+	@Override
+	void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	void HandleGameUpdate(GameUpdate m, SafeSocket sender) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 	

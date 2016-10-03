@@ -3,8 +3,10 @@ package src.main.java.fr.insa.ot3.communication;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import src.main.java.fr.insa.ot3.communication.message.AddLatLng;
 import src.main.java.fr.insa.ot3.communication.message.GameList;
 import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
+import src.main.java.fr.insa.ot3.communication.message.GameUpdate;
 import src.main.java.fr.insa.ot3.communication.message.JoinGame;
 import src.main.java.fr.insa.ot3.communication.message.JoinedGame;
 import src.main.java.fr.insa.ot3.communication.message.NewGame;
@@ -31,8 +33,12 @@ public abstract class Side
 	}
 	
 	abstract void HandleTraceMessage(TraceMessage m, SafeSocket sender);
+	
+	abstract void HandleAddLatLng(AddLatLng m, SafeSocket sender);
 
 	abstract void HandleGameList(GameList m, SafeSocket sender);
+
+	abstract void HandleGameUpdate(GameUpdate m, SafeSocket sender);
 
 	abstract void HandleGameListRequest(GameListRequest m, SafeSocket sender);
 

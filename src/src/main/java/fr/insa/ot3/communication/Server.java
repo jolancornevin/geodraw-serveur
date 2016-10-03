@@ -5,14 +5,17 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import src.main.java.fr.insa.ot3.communication.message.AddLatLng;
 import src.main.java.fr.insa.ot3.communication.message.GameList;
 import src.main.java.fr.insa.ot3.communication.message.GameListRequest;
+import src.main.java.fr.insa.ot3.communication.message.GameUpdate;
 import src.main.java.fr.insa.ot3.communication.message.JoinGame;
 import src.main.java.fr.insa.ot3.communication.message.JoinedGame;
 import src.main.java.fr.insa.ot3.communication.message.Message;
@@ -30,8 +33,10 @@ public class Server extends Side
 	private transient ServerSocket servSock;
 
 	private transient Thread socketCreator;
+	private transient Thread gameCleaner;
 
 	private final Map<Integer, Game> gameList;
+	private final List<Game> finishedGames;
 	private final transient Map<Integer, List<SafeSocket>> gameSubscribers;
 	
 	private int id = 0;
@@ -77,6 +82,7 @@ public class Server extends Side
 		super();
 
 		gameList = new HashMap<Integer, Game>();
+		finishedGames = new LinkedList<Game>();
 		gameSubscribers = new HashMap<Integer, List<SafeSocket>>();
 
 		sockets = new LinkedList<SafeSocket>();
@@ -113,12 +119,49 @@ public class Server extends Side
 			}
 		};
 		socketCreator.start();
+		
+		gameCleaner = new Thread("Server finished games cleaner"){
+			public void run()
+			{
+				int preIndex, postIndex;
+				while (!interrupted) {
+					
+					preIndex = finishedGames.size();
+					
+					Date now = new Date();
+					for(Game g : gameList.values())
+					{
+						if(now.after(g.getEndDate()))
+							finishedGames.add(g);
+					}
+					
+					
+					postIndex = finishedGames.size();
+					if(postIndex > preIndex) // if there is some new finished games
+					{
+						for(int i = preIndex; i < postIndex; i++)
+						{
+							gameList.remove(finishedGames.get(i).getId());
+						}
+					}
+					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				}
+			}
+		};
+		gameCleaner.start();
 	}
 
 	public void stop()
 	{
 		try {
 			interrupted = true;
+			gameCleaner.interrupt();
 			Client c = new Client("localhost", 8080);
 			Thread.sleep(500);
 			c.disconnect();
@@ -236,6 +279,24 @@ public class Server extends Side
 		{
 			gameSubscribers.get(gameID).add(s);
 		}
+	}
+
+
+
+
+	@Override
+	void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
+		sendMessageToGame(m.getGameID(), m);
+		gameList.get(m.getGameID()).getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
+	}
+
+
+
+
+	@Override
+	void HandleGameUpdate(GameUpdate m, SafeSocket sender) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
