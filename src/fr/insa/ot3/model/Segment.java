@@ -1,4 +1,4 @@
-package main.java.fr.insa.ot3.model;
+package fr.insa.ot3.model;
 
 import java.util.Collections;
 import java.util.LinkedList;

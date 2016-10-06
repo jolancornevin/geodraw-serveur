@@ -1,4 +1,4 @@
-package main.java.fr.insa.ot3.communication;
+package fr.insa.ot3.communication;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,22 +12,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import main.java.fr.insa.ot3.communication.message.AddLatLng;
-import main.java.fr.insa.ot3.communication.message.GameList;
-import main.java.fr.insa.ot3.communication.message.GameListRequest;
-import main.java.fr.insa.ot3.communication.message.GameUpdate;
-import main.java.fr.insa.ot3.communication.message.JoinGame;
-import main.java.fr.insa.ot3.communication.message.JoinedGame;
-import main.java.fr.insa.ot3.communication.message.Message;
-import main.java.fr.insa.ot3.communication.message.NewGame;
-import main.java.fr.insa.ot3.communication.message.TraceMessage;
-import main.java.fr.insa.ot3.communication.message.Vote;
-import main.java.fr.insa.ot3.model.Game;
-import main.java.fr.insa.ot3.utils.Utils;
-
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
 import com.sun.javafx.webkit.UtilitiesImpl;
+
+import fr.insa.ot3.communication.message.AddLatLng;
+import fr.insa.ot3.communication.message.GameList;
+import fr.insa.ot3.communication.message.GameListRequest;
+import fr.insa.ot3.communication.message.GameUpdate;
+import fr.insa.ot3.communication.message.JoinGame;
+import fr.insa.ot3.communication.message.JoinedGame;
+import fr.insa.ot3.communication.message.Message;
+import fr.insa.ot3.communication.message.NewGame;
+import fr.insa.ot3.communication.message.TraceMessage;
+import fr.insa.ot3.communication.message.Vote;
+import fr.insa.ot3.model.Game;
+import fr.insa.ot3.utils.Utils;
 
 public class Server extends Side
 {
