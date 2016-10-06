@@ -8,18 +8,12 @@ package fr.insa.ot3.model;
 import java.util.Calendar;
 import java.util.Date;
 
-<<<<<<< HEAD:src/main/java/fr/insa/ot3/model/GeoDrawModel.java
-import main.java.fr.insa.ot3.communication.Client;
-import main.java.fr.insa.ot3.communication.Server;
-import main.java.fr.insa.ot3.communication.message.AddLatLng;
-import main.java.fr.insa.ot3.communication.message.NewGame;
-import main.java.fr.insa.ot3.utils.Utils;
-=======
 import fr.insa.ot3.communication.Client;
 import fr.insa.ot3.communication.Server;
+import fr.insa.ot3.communication.message.AddLatLng;
 import fr.insa.ot3.communication.message.NewGame;
 import fr.insa.ot3.utils.Utils;
->>>>>>> 7fe657dc869c87366f0460c842ea15fb821943c3:src/fr/insa/ot3/model/GeoDrawModel.java
+
 
 /**
  *
