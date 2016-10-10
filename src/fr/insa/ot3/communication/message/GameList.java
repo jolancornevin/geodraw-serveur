@@ -6,16 +6,16 @@ import fr.insa.ot3.model.Game;
 
 public class GameList extends Message {
 
-	private final Collection<Game> games;
+	private final List<GameInfo> games;
 	
 
-	public GameList(Collection<Game> games) 
+	public GameList(List<GameInfo> games) 
 	{
 		super(Type.GAMELIST);
 		this.games = games;
 	}
 
-	public Collection<Game> getGames() {
+	public List<GameInfo> getGames() {
 		return games;
 	}
 }

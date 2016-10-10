@@ -97,8 +97,13 @@ public class Server extends Side
 
 	}
 	
-	public Collection<Game> getGameList() {
-		return gameList.values();
+	public List<GameInfo> getGameList() {
+		List<GameInfo> lst = new LinkedList<GameInfo>();
+		for(Game g : gameList.values())
+		{
+			lst.add(new GameList(g));
+		}
+		return lst;
 	}
 	
 	private transient boolean interrupted = false;
@@ -262,7 +267,9 @@ public class Server extends Side
 	void HandleNewGame(NewGame m, SafeSocket sender) {
 		int gID = id;
 		id++;
-		Game g = new Game(gID, m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getStartDate(), m.getEndDate(), m.getTheme());
+		
+		
+		Game g = new Game(gID, m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getHours(), m.getMin(), m.getTheme());
 		g.addPlayer(m.getPlayerID());
 		gameList.put(gID, g);
 		subscribeToGame(sender, gID);

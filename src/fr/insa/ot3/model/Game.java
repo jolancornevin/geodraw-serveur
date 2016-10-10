@@ -18,6 +18,7 @@ public class Game {
     private final int maxNbPlayer;
     private final Date startDate;
     private final Date endDate;
+	
     private final String theme;
 
     private final Map<String, Integer> players;
@@ -25,15 +26,20 @@ public class Game {
     
     private int currentNbPlayer;
 
-    public Game(int id, String name, Boolean lock, int currentNbPlayer, int maxNbPlayer, Date startDate, Date endDate, String theme) {
+    public Game(int id, String name, Boolean lock, int currentNbPlayer, int maxNbPlayer, int hours, int minutes, String theme) {
         this.name = name;
         this.lock = lock;
         this.currentNbPlayer = currentNbPlayer;
         this.maxNbPlayer = maxNbPlayer;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.theme = theme;
         
+		Calendar c = Calendar.getInstance();
+		startDate = Calendar.getTime();
+		
+		c.add(Calendar.HOUR, hours);
+		c.add(Calendar.MINUTE, minutes);
+		
+		
         this.id = id;
         
         players = new HashMap<String, Integer>();

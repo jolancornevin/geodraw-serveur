@@ -7,20 +7,20 @@ public class NewGame extends Message
 	private final String name;
     private final boolean lock;
     private final int maxNbPlayer;
-    private final Date startDate;
-    private final Date endDate;
+    private final int minDur;
+    private final int hoursDur;
     private final String theme;
     
     private final String playerID;
     
-	public NewGame(String name, boolean lock, int maxNbPlayer, Date startDate, Date endDate, String theme, String playerID)
+	public NewGame(String name, boolean lock, int maxNbPlayer, int hours, int min, String theme, String playerID)
 	{
 		super(Type.NEWGAME);
 		this.name = name;
 		this.lock = lock;
 		this.maxNbPlayer = maxNbPlayer;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.minDur = min;
+		this.hoursDur = hours;
 		this.theme = theme;
 		
 		this.playerID = playerID;
@@ -38,12 +38,12 @@ public class NewGame extends Message
 		return maxNbPlayer;
 	}
 
-	public Date getStartDate() {
-		return startDate;
+	public Date getHours() {
+		return hoursDur;
 	}
 
-	public Date getEndDate() {
-		return endDate;
+	public Date getMins() {
+		return minDur;
 	}
 
 	public String getTheme() {
