@@ -10,8 +10,10 @@ import java.util.Date;
 
 import fr.insa.ot3.communication.Client;
 import fr.insa.ot3.communication.Server;
+import fr.insa.ot3.communication.message.AddLatLng;
 import fr.insa.ot3.communication.message.NewGame;
 import fr.insa.ot3.utils.Utils;
+
 
 /**
  *
@@ -40,6 +42,9 @@ public class GeoDrawModel
         Drawing trace = new Drawing();
         trace.addSegment(segment1);
         trace.addSegment(segment2);
+        
+        Client c = new Client("localhost", 8080);
+        c.sendMessage(new AddLatLng("dfh", 1, new LatLng(0.234534, 0.234523), true));
         
 //        Gson gson = new Gson();
 //        String jsonString = gson.toJson(trace);
@@ -83,7 +88,7 @@ public class GeoDrawModel
 			e.printStackTrace();
 		}
     	
-    	Client c = new Client("localhost", 8080);
+    	Client a = new Client("localhost", 8080);
     	c.sendMessage(new NewGame("patate", false, 15, start, end, "Les avions", "franck"));
     	
     	c.disconnect();

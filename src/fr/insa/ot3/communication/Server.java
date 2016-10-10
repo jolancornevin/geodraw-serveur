@@ -14,6 +14,7 @@ import java.util.Scanner;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
+import com.sun.javafx.webkit.UtilitiesImpl;
 
 import fr.insa.ot3.communication.message.AddLatLng;
 import fr.insa.ot3.communication.message.GameList;
@@ -294,6 +295,7 @@ public class Server extends Side
 
 	@Override
 	void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
+		System.out.println(Utils.gson.toJson(m));
 		sendMessageToGame(m.getGameID(), m);
 		gameList.get(m.getGameID()).getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
 	}
