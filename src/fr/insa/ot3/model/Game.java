@@ -86,6 +86,16 @@ public class Game {
     		currentNbPlayer--;
     	}
     }
+	
+	public boolean hasPlayer(String name)
+	{
+		return players.containsKey(name);
+	}
+	
+	public Map<String, Integer> getPlayers()
+	{
+		return players;
+	}
 
     public int getMaxNbPlayer() {
         return maxNbPlayer;

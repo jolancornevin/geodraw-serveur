@@ -107,6 +107,17 @@ public class Server extends Side
 		return lst;
 	}
 	
+	
+	public List<GameInfo> getGameListFor(String userID) {
+		List<GameInfo> lst = new LinkedList<GameInfo>();
+		for(Game g : gameList.values())
+		{
+			if(g.hasPlayer(userID))
+				lst.add(new GameList(g));
+		}
+		return lst;
+	}
+	
 	private transient boolean interrupted = false;
 
 	public void start()
@@ -242,7 +253,10 @@ public class Server extends Side
 	@Override
 	void HandleGameListRequest(GameListRequest m, SafeSocket sender) 
 	{
-		sendMessageTo(sender, new GameList(getGameList()));
+		if(m.isSelf())
+			sendMessageTo(sender, new GameList(getGameListFor(m.getUserID()), true));
+		else
+			sendMessageTo(sender, new GameList(getGameList(), false));
 	}
 
 	@Override
