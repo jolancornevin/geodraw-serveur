@@ -16,17 +16,14 @@ import fr.insa.ot3.utils.Utils;
 
 
 /**
- *
  * @author max
  */
-public class GeoDrawModel
-{
+public class GeoDrawModel {
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         Segment segment1 = new Segment();
         segment1.addLatLng(new LatLng(0.234534, 0.234523));
         segment1.addLatLng(new LatLng(0.23452345, 0.234523));
@@ -38,14 +35,14 @@ public class GeoDrawModel
         segment2.addLatLng(new LatLng(0.567452345, 0.67234523));
         segment2.addLatLng(new LatLng(0.456323434, 0.8745623));
         segment2.addLatLng(new LatLng(0.5578645, 0.567678));
-        
+
         Drawing trace = new Drawing();
         trace.addSegment(segment1);
         trace.addSegment(segment2);
-        
+
         Client c = new Client("localhost", 8080);
         c.sendMessage(new AddLatLng("dfh", 1, new LatLng(0.234534, 0.234523), true));
-        
+
 //        Gson gson = new Gson();
 //        String jsonString = gson.toJson(trace);
 //        
@@ -60,7 +57,7 @@ public class GeoDrawModel
 //        System.out.println(tt.getId());
 //        jsonString = gson.toJson(tt);
 //        System.out.println(jsonString);
-        
+
 //        Server s = new Server();
 
         Calendar cal = Calendar.getInstance();
@@ -76,28 +73,28 @@ public class GeoDrawModel
 //        System.out.println(Utils.gson.toJson(g));
 //        System.out.println(Utils.gson.toJson(g2));
 //        
-    	Server s = new Server();
-//        System.out.println(Utils.gson.toJson(s));
+        Server s = new Server();
+//      System.out.println(Utils.gson.toJson(s));
 
-    	s.start();
-    	
-    	try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	Client a = new Client("localhost", 8080);
-    	c.sendMessage(new NewGame("patate", false, 15, 5, 7, "Les avions", "franck"));
-    	
-    	c.disconnect();
-    	s.stop();
-    	String jsonstr = Utils.gson.toJson(s);
-    	
-    	Server s2 = Utils.gson.fromJson(jsonstr, Server.class);
-    	System.out.println(Utils.gson.toJson(s2));
-    	
+        s.start();
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        Client a = new Client("localhost", 8080);
+        c.sendMessage(new NewGame("patate", false, 15, 5, 2, "Les avions", "franck"));
+
+        c.disconnect();
+        s.stop();
+        String jsonstr = Utils.gson.toJson(s);
+
+        Server s2 = Utils.gson.fromJson(jsonstr, Server.class);
+        System.out.println(Utils.gson.toJson(s2));
+
     }
 
 }

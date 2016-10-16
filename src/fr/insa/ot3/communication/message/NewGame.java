@@ -1,55 +1,53 @@
 package fr.insa.ot3.communication.message;
 
 
-public class NewGame extends Message
-{
-	private final String name;
+public class NewGame extends Message {
+    private final String name;
     private final boolean lock;
     private final int maxNbPlayer;
     private final int minDur;
     private final int hoursDur;
     private final String theme;
-    
+
     private final String playerID;
-    
-	public NewGame(String name, boolean lock, int maxNbPlayer, int hours, int min, String theme, String playerID)
-	{
-		super(Type.NEWGAME);
-		this.name = name;
-		this.lock = lock;
-		this.maxNbPlayer = maxNbPlayer;
-		this.minDur = min;
-		this.hoursDur = hours;
-		this.theme = theme;
-		
-		this.playerID = playerID;
-	}
 
-	public String getName() {
-		return name;
-	}
+    public NewGame(String name, boolean lock, int maxNbPlayer, int hours, int min, String theme, String playerID) {
+        super(Type.NEWGAME);
+        this.name = name;
+        this.lock = lock;
+        this.maxNbPlayer = maxNbPlayer;
+        this.minDur = min;
+        this.hoursDur = hours;
+        this.theme = theme;
 
-	public boolean isLock() {
-		return lock;
-	}
+        this.playerID = playerID;
+    }
 
-	public int getMaxNbPlayer() {
-		return maxNbPlayer;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public int getHours() {
-		return hoursDur;
-	}
+    public boolean isLock() {
+        return lock;
+    }
 
-	public int getMins() {
-		return minDur;
-	}
+    public int getMaxNbPlayer() {
+        return maxNbPlayer;
+    }
 
-	public String getTheme() {
-		return theme;
-	}
+    public int getHours() {
+        return hoursDur;
+    }
 
-	public String getPlayerID() {
-		return playerID;
-	}
+    public int getMins() {
+        return minDur;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public String getPlayerID() {
+        return playerID;
+    }
 }
