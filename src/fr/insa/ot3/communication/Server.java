@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,7 +13,6 @@ import java.util.Scanner;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
-import com.sun.javafx.webkit.UtilitiesImpl;
 
 import fr.insa.ot3.communication.message.AddLatLng;
 import fr.insa.ot3.communication.message.GameList;
@@ -27,6 +25,7 @@ import fr.insa.ot3.communication.message.NewGame;
 import fr.insa.ot3.communication.message.TraceMessage;
 import fr.insa.ot3.communication.message.Vote;
 import fr.insa.ot3.model.Game;
+import fr.insa.ot3.model.GameInfo;
 import fr.insa.ot3.utils.Utils;
 
 public class Server extends Side
@@ -102,7 +101,7 @@ public class Server extends Side
 		List<GameInfo> lst = new LinkedList<GameInfo>();
 		for(Game g : gameList.values())
 		{
-			lst.add(new GameList(g));
+			lst.add(new GameInfo(g));
 		}
 		return lst;
 	}
@@ -113,7 +112,7 @@ public class Server extends Side
 		for(Game g : gameList.values())
 		{
 			if(g.hasPlayer(userID))
-				lst.add(new GameList(g));
+				lst.add(new GameInfo(g));
 		}
 		return lst;
 	}
@@ -284,7 +283,7 @@ public class Server extends Side
 		id++;
 		
 		
-		Game g = new Game(gID, m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getHours(), m.getMin(), m.getTheme());
+		Game g = new Game(gID, m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme());
 		g.addPlayer(m.getPlayerID());
 		gameList.put(gID, g);
 		subscribeToGame(sender, gID);

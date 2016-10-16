@@ -1,8 +1,8 @@
 package fr.insa.ot3.communication.message;
 
-import java.util.Collection;
+import java.util.List;
 
-import fr.insa.ot3.model.Game;
+import fr.insa.ot3.model.GameInfo;
 
 public class GameList extends Message {
 

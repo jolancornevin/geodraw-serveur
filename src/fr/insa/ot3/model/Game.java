@@ -1,5 +1,6 @@
 package fr.insa.ot3.model;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,11 +35,12 @@ public class Game {
         this.theme = theme;
         
 		Calendar c = Calendar.getInstance();
-		startDate = Calendar.getTime();
+		startDate = c.getTime();
 		
 		c.add(Calendar.HOUR, hours);
 		c.add(Calendar.MINUTE, minutes);
 		
+		endDate = c.getTime();
 		
         this.id = id;
         

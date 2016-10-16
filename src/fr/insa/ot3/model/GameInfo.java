@@ -1,10 +1,7 @@
 package fr.insa.ot3.model;
 
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Djowood on 27/09/2016.
@@ -42,14 +39,14 @@ public class GameInfo {
 		
 		Date end = g.getEndDate();
 		
-		remainingHours = (end.getTimeInMillis() - current.getTimeInMillis()) / nbMilliHour;
-		remainingMinutes = ((end.getTimeInMillis() - current.getTimeInMillis()) % nbMilliHour) / nbMilliMinute;
+		remainingHours = (int) ((end.getTime() - current.getTime()) / nbMilliHour);
+		remainingMinutes = (int) (((end.getTime() - current.getTime()) % nbMilliHour) / nbMilliMinute);
 		
-		maxHours = (end.getTimeInMillis() - start.getTimeInMillis()) / nbMilliHour;
-		maxMinutes = ((end.getTimeInMillis() - start.getTimeInMillis()) % nbMilliHour) / nbMilliMinute;
+		maxHours = (int) ((end.getTime() - start.getTime()) / nbMilliHour);
+		maxMinutes = (int) (((end.getTime() - start.getTime()) % nbMilliHour) / nbMilliMinute);
 		
 		
-        this.id = id;
+        this.id = g.getId();
 		
     }
 

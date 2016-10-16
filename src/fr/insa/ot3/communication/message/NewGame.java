@@ -1,6 +1,5 @@
 package fr.insa.ot3.communication.message;
 
-import java.util.Date;
 
 public class NewGame extends Message
 {
@@ -38,11 +37,11 @@ public class NewGame extends Message
 		return maxNbPlayer;
 	}
 
-	public Date getHours() {
+	public int getHours() {
 		return hoursDur;
 	}
 
-	public Date getMins() {
+	public int getMins() {
 		return minDur;
 	}
 
