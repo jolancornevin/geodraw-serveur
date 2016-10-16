@@ -5,6 +5,7 @@ import com.m5c.safesockets.SafeSocket;
 import fr.insa.ot3.communication.message.*;
 import fr.insa.ot3.model.Game;
 import fr.insa.ot3.model.GameInfo;
+import fr.insa.ot3.mysql.Connexion;
 import fr.insa.ot3.utils.Utils;
 
 import java.io.IOException;
@@ -28,6 +29,9 @@ public class Server extends Side {
 
     public static void main(String[] args) {
         System.out.println("Debut du serveur");
+
+        Connexion co = Connexion.getInstance();
+        System.out.println("Connexion au serveur établie");
 
         Server s;
 
