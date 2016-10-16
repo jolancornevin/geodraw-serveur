@@ -1,11 +1,11 @@
 package fr.insa.ot3.utils;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import com.google.gson.Gson;
 
 public class Utils {
     public static Gson gson = new Gson();

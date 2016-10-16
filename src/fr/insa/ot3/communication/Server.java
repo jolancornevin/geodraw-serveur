@@ -1,33 +1,17 @@
 package fr.insa.ot3.communication;
 
+import com.m5c.safesockets.BreakdownObserver;
+import com.m5c.safesockets.SafeSocket;
+import fr.insa.ot3.communication.message.*;
+import fr.insa.ot3.model.Game;
+import fr.insa.ot3.model.GameInfo;
+import fr.insa.ot3.utils.Utils;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-
-import com.m5c.safesockets.BreakdownObserver;
-import com.m5c.safesockets.SafeSocket;
-
-import fr.insa.ot3.communication.message.AddLatLng;
-import fr.insa.ot3.communication.message.GameList;
-import fr.insa.ot3.communication.message.GameListRequest;
-import fr.insa.ot3.communication.message.GameUpdate;
-import fr.insa.ot3.communication.message.JoinGame;
-import fr.insa.ot3.communication.message.JoinedGame;
-import fr.insa.ot3.communication.message.Message;
-import fr.insa.ot3.communication.message.NewGame;
-import fr.insa.ot3.communication.message.TraceMessage;
-import fr.insa.ot3.communication.message.Vote;
-import fr.insa.ot3.model.Game;
-import fr.insa.ot3.model.GameInfo;
-import fr.insa.ot3.utils.Utils;
+import java.util.*;
 
 public class Server extends Side {
     private transient List<SafeSocket> sockets;

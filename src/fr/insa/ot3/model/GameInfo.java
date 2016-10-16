@@ -1,6 +1,7 @@
 package fr.insa.ot3.model;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Djowood on 27/09/2016.

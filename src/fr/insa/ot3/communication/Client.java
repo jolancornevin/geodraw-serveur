@@ -1,21 +1,11 @@
 package fr.insa.ot3.communication;
 
-import java.io.IOException;
-
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
-
-import fr.insa.ot3.communication.message.AddLatLng;
-import fr.insa.ot3.communication.message.GameList;
-import fr.insa.ot3.communication.message.GameListRequest;
-import fr.insa.ot3.communication.message.GameUpdate;
-import fr.insa.ot3.communication.message.JoinGame;
-import fr.insa.ot3.communication.message.JoinedGame;
-import fr.insa.ot3.communication.message.Message;
-import fr.insa.ot3.communication.message.NewGame;
-import fr.insa.ot3.communication.message.TraceMessage;
-import fr.insa.ot3.communication.message.Vote;
+import fr.insa.ot3.communication.message.*;
 import fr.insa.ot3.utils.Utils;
+
+import java.io.IOException;
 
 public class Client extends Side {
     private SafeSocket socket;

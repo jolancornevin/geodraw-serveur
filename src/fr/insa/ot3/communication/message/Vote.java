@@ -1,29 +1,28 @@
 package fr.insa.ot3.communication.message;
 
-public class Vote extends Message{
+public class Vote extends Message {
 
-	private final int gameID;
-	private final String voter;
-	private final String electedPlayer;
-	
-	public Vote(int gameID, String voter, String electedPlayer)
-	{
-		super(Type.VOTE);
-		
-		this.gameID = gameID;
-		this.voter = voter;
-		this.electedPlayer = electedPlayer;
-	}
+    private final int gameID;
+    private final String voter;
+    private final String electedPlayer;
 
-	public int getGameID() {
-		return gameID;
-	}
+    public Vote(int gameID, String voter, String electedPlayer) {
+        super(Type.VOTE);
 
-	public String getVoter() {
-		return voter;
-	}
+        this.gameID = gameID;
+        this.voter = voter;
+        this.electedPlayer = electedPlayer;
+    }
 
-	public String getElectedPlayer() {
-		return electedPlayer;
-	}
+    public int getGameID() {
+        return gameID;
+    }
+
+    public String getVoter() {
+        return voter;
+    }
+
+    public String getElectedPlayer() {
+        return electedPlayer;
+    }
 }

@@ -2,40 +2,39 @@ package fr.insa.ot3.communication.message;
 
 import fr.insa.ot3.model.LatLng;
 
-public class AddLatLng extends Message{
-	
-	private final String userID;
-	private final int gameID;
-	private final boolean drawing;
-	private LatLng latLng;
-	
-	public AddLatLng(String userID, int gameID, LatLng latLng, boolean drawing)
-	{
-		super(Type.ADDLATLNG);
-		
-		this.userID = userID;
-		this.gameID = gameID;
-		this.latLng = latLng;
-		this.drawing = drawing;
-	}
+public class AddLatLng extends Message {
 
-	public LatLng getLatLng() {
-		return latLng;
-	}
+    private final String userID;
+    private final int gameID;
+    private final boolean drawing;
+    private LatLng latLng;
 
-	public void setLatLng(LatLng latLng) {
-		this.latLng = latLng;
-	}
+    public AddLatLng(String userID, int gameID, LatLng latLng, boolean drawing) {
+        super(Type.ADDLATLNG);
 
-	public String getUserID() {
-		return userID;
-	}
+        this.userID = userID;
+        this.gameID = gameID;
+        this.latLng = latLng;
+        this.drawing = drawing;
+    }
 
-	public int getGameID() {
-		return gameID;
-	}
+    public LatLng getLatLng() {
+        return latLng;
+    }
 
-	public boolean isDrawing() {
-		return drawing;
-	}
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public int getGameID() {
+        return gameID;
+    }
+
+    public boolean isDrawing() {
+        return drawing;
+    }
 }
