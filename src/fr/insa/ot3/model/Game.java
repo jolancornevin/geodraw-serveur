@@ -15,6 +15,7 @@ public class Game {
     private final String name;
     private final boolean lock;
     private final int maxNbPlayer;
+    private int currentNbPlayer;
     private final Date startDate;
     private final Date endDate;
 
@@ -23,7 +24,6 @@ public class Game {
     private final Map<String, Integer> players;
     private final Map<String, Drawing> traces;
 
-    private int currentNbPlayer;
 
     public Game(int id, String name, Boolean lock, int currentNbPlayer, int maxNbPlayer, int hours, int minutes, String theme) {
         this.name = name;
