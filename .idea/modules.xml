@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/geodraw-serveur.iml" filepath="$PROJECT_DIR$/.idea/modules/geodraw-serveur.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/geodraw-serveur_main.iml" filepath="$PROJECT_DIR$/.idea/modules/geodraw-serveur_main.iml" group="geodraw-serveur" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/geodraw-serveur_test.iml" filepath="$PROJECT_DIR$/.idea/modules/geodraw-serveur_test.iml" group="geodraw-serveur" />
+    </modules>
+  </component>
+</project>
