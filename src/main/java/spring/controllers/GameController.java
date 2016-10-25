@@ -1,9 +1,10 @@
-package spring.mysql;
+package spring.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import spring.model.Game;
+import spring.models.Game;
 import org.springframework.beans.factory.annotation.Autowired;
+import spring.daos.GameDao;
 
 import java.util.List;
 

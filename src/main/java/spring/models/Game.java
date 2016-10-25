@@ -1,9 +1,8 @@
-package spring.model;
+package spring.models;
 
 import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 /**

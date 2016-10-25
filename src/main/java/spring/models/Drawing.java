@@ -1,4 +1,4 @@
-package spring.model;
+package spring.models;
 
 import java.util.LinkedList;
 import java.util.List;

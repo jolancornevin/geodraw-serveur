@@ -1,6 +1,6 @@
 package spring.communication.message;
 
-import spring.model.GameInfo;
+import spring.models.GameInfo;
 
 import java.util.List;
 

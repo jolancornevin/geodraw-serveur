@@ -1,7 +1,7 @@
-package spring.mysql;
+package spring.daos;
 
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import spring.model.Game;
+import spring.models.Game;
 import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;

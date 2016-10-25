@@ -1,6 +1,6 @@
 package spring.communication.message;
 
-import spring.model.Drawing;
+import spring.models.Drawing;
 
 public class TraceMessage extends Message {
 

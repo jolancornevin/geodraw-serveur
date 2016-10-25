@@ -1,6 +1,6 @@
 package spring.communication.message;
 
-import spring.model.Game;
+import spring.models.Game;
 
 public class GameUpdate extends Message {
     private final Game updatedGame;

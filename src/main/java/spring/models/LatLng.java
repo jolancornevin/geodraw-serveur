@@ -1,4 +1,4 @@
-package spring.model;
+package spring.models;
 
 /**
  * Respresents  a single GPS fix

@@ -1,4 +1,4 @@
-package spring.model;
+package spring.models;
 
 import java.util.Calendar;
 import java.util.Date;

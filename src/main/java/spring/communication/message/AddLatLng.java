@@ -1,6 +1,6 @@
 package spring.communication.message;
 
-import spring.model.LatLng;
+import spring.models.LatLng;
 
 public class AddLatLng extends Message {
 
