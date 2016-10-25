@@ -15,7 +15,7 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
-    private boolean lock;
+    private boolean locked;
     private int maxNbPlayer;
     private int currentNbPlayer;
     private Date startDate;
@@ -36,7 +36,7 @@ public class Game {
 
     public Game(int id, String name, Boolean lock, int currentNbPlayer, int maxNbPlayer, int hours, int minutes, String theme) {
         this.name = name;
-        this.lock = lock;
+        this.locked = lock;
         this.currentNbPlayer = currentNbPlayer;
         this.maxNbPlayer = maxNbPlayer;
         this.theme = theme;
@@ -60,7 +60,7 @@ public class Game {
     }
 
     public Boolean getLock() {
-        return lock;
+        return locked;
     }
 
     public String getName() {
@@ -136,12 +136,12 @@ public class Game {
         this.name = name;
     }
 
-    public boolean isLock() {
-        return lock;
+    public boolean isLocked() {
+        return locked;
     }
 
-    public void setLock(boolean lock) {
-        this.lock = lock;
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public void setMaxNbPlayer(int maxNbPlayer) {
