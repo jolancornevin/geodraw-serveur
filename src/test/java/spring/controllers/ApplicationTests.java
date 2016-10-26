@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package spring.hello;
+package spring.controllers;
 
+import org.hibernate.cfg.Configuration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,29 +42,23 @@ public class ApplicationTests {
 	private MockMvc mockMvc;
 
 	@Autowired
-	private PersonRepository personRepository;
+	private GameController gameController;
 
-	@Before
-	public void deleteAllBeforeTests() throws Exception {
-		personRepository.deleteAll();
-	}
+    @Test
+    public void shouldCreateGame() throws Exception {
+        mockMvc.perform(post("/game/create")
+                .param("name","testCreateGamme"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value(true))
+                .andExpect(jsonPath("$.data.name").value("testCreateGamme"));
+    }
 
-	@Test
-	public void shouldReturnRepositoryIndex() throws Exception {
-
-		mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(
-				jsonPath("$._links.people").exists());
-	}
-
-	@Test
-	public void shouldCreateEntity() throws Exception {
-
-		mockMvc.perform(post("/people").content(
-				"{\"firstName\": \"Frodo\", \"lastName\":\"Baggins\"}")).andExpect(
-						status().isCreated()).andExpect(
-								header().string("Location", containsString("people/")));
-	}
-
+    @Test
+    public void shouldBadRequestCreateGame() throws Exception {
+        mockMvc.perform(post("/game/create"))
+                .andExpect(status().isBadRequest());
+    }
+/*
 	@Test
 	public void shouldRetrieveEntity() throws Exception {
 
@@ -138,5 +133,5 @@ public class ApplicationTests {
 		mockMvc.perform(delete(location)).andExpect(status().isNoContent());
 
 		mockMvc.perform(get(location)).andExpect(status().isNotFound());
-	}
+	}*/
 }
