@@ -7,7 +7,5 @@ public class HttpResponseOk<T> {
     public final T data;
     public final boolean status = true;
 
-    public HttpResponseOk(T d) {
-        data = d;
-    }
+    public HttpResponseOk(T dt) { data = dt; }
 }

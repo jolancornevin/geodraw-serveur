@@ -1,6 +1,9 @@
 package spring.controllers;
 
+import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import spring.daos.GameDao;
@@ -22,8 +25,13 @@ public class GameController {
     private GameDao gameDao;
 
     @ExceptionHandler(Exception.class)
-    public HttpResponseKo handleException(Exception ex) {
-        return new HttpResponseKo(ex.getMessage());
+    public ResponseEntity<HttpResponseKo> handleException(Exception ex) {
+        return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(BadHttpRequest.class)
+    public @ResponseBody ResponseEntity<HttpResponseKo> handleException(BadHttpRequest ex) {
+        return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -31,18 +39,24 @@ public class GameController {
      */
     @PostMapping(path = "/game/create", produces = "application/json")
     @ResponseBody
-    public HttpResponseOk<Game> create(String name) {
-        Game game = new Game(2, "coucou2", false, 0, 20, 5, 5, "avion");
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public HttpResponseOk<Game> create(String name) throws BadHttpRequest {
+        if(name == null)
+            throw new BadHttpRequest();
+
+        Game game = new Game(name, false, 0, 20, 5, 5, "avion");
         gameDao.save(game);
 
         return new HttpResponseOk<>(game);
     }
 
+
     /**
      * GET /delete  --> Delete the game having the passed id.
      */
-    @DeleteMapping("/game/delete")
+    @DeleteMapping(path = "/game/delete", produces = "application/json")
     @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
     public HttpResponseOk<Game> delete(int id) {
         Game game = new Game(id);
         gameDao.delete(game);
@@ -54,8 +68,9 @@ public class GameController {
      * GET /get-by-email  --> Return the id for the game having the passed
      * email.
      */
-    @RequestMapping(path = "/game/get-by-name", method = RequestMethod.GET)
+    @GetMapping(path = "/game/get-by-name", produces = "application/json")
     @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
     public HttpResponseOk<List<Game>> getByName(String name) {
         List<Game> games = gameDao.findByName(name);
 
@@ -66,8 +81,9 @@ public class GameController {
      * GET /update  --> Update the email and the name for the game in the
      * database having the passed id.
      */
-    @PostMapping("/game/update")
+    @PostMapping(path = "/game/update", produces = "application/json")
     @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
     public HttpResponseOk<Game> updateGameName(long id, String name) {
         Game game = gameDao.findOne(id);
         game.setName(name);
