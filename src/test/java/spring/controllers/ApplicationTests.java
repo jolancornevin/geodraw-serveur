@@ -90,16 +90,19 @@ public class ApplicationTests {
 
     @Test
     public void shouldQueryGame() throws Exception {
-
-        mockMvc.perform(post("/people").content(
-                "{ \"firstName\": \"Frodo\", \"lastName\":\"Baggins\"}"))
+        mockMvc.perform
+                (
+                        post("/game/create")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new Game("testInsert", false, 1, 20, 5, 5, "avion")))
+                )
                 .andExpect(status().isCreated());
 
         mockMvc.perform(
-                get("/people/search/findByLastName?name={name}", "Baggins")).andExpect(
-                status().isOk()).andExpect(
-                jsonPath("$._embedded.people[0].firstName").value(
-                        "Frodo"));
+                get("/game/get-by-name?name={name}", "testInsert"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(true))
+                .andExpect(jsonPath("$.data[0].name").value("testInsert"));
     }
 
     @Test
