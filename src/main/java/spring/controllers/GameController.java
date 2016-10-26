@@ -1,10 +1,12 @@
 package spring.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import spring.models.Game;
-import org.springframework.beans.factory.annotation.Autowired;
 import spring.daos.GameDao;
+import spring.models.Game;
+import spring.utils.HttpResponseKo;
+import spring.utils.HttpResponseOk;
 
 import java.util.List;
 
@@ -19,20 +21,21 @@ public class GameController {
     @Autowired
     private GameDao gameDao;
 
+    @ExceptionHandler(Exception.class)
+    public HttpResponseKo handleException(Exception ex) {
+        return new HttpResponseKo(ex.getMessage());
+    }
+
     /**
      * GET /create  --> Create a new game and save it in the database.
      */
-    @PostMapping("/game/create")
+    @PostMapping(path = "/game/create", produces = "application/json")
     @ResponseBody
-    public String create(String name) {
-        String gameId = "";
-        try {
-            Game game = new Game(1, "coucou", false, 0, 20, 5, 5, "avion");
-            gameDao.save(game);
-        } catch (Exception ex) {
-            return "Error creating the game: " + ex.toString();
-        }
-        return "game succesfully created with id = " + gameId;
+    public HttpResponseOk<Game> create(String name) {
+        Game game = new Game(2, "coucou2", false, 0, 20, 5, 5, "avion");
+        gameDao.save(game);
+
+        return new HttpResponseOk<>(game);
     }
 
     /**
@@ -40,14 +43,11 @@ public class GameController {
      */
     @DeleteMapping("/game/delete")
     @ResponseBody
-    public String delete(int id) {
-        try {
-            Game game = new Game(id);
-            gameDao.delete(game);
-        } catch (Exception ex) {
-            return "Error deleting the game:" + ex.toString();
-        }
-        return "game succesfully deleted!";
+    public HttpResponseOk<Game> delete(int id) {
+        Game game = new Game(id);
+        gameDao.delete(game);
+
+        return new HttpResponseOk<>(game);
     }
 
     /**
@@ -56,15 +56,10 @@ public class GameController {
      */
     @RequestMapping(path = "/game/get-by-name", method = RequestMethod.GET)
     @ResponseBody
-    public String getByName(String name) {
-        String gameId = "";
-        try {
-            List<Game> games = gameDao.findByName(name);
-            gameId = String.valueOf(games.get(0).getId());
-        } catch (Exception ex) {
-            return "Game not found";
-        }
-        return "The game id of the first one is: " + gameId;
+    public HttpResponseOk<List<Game>> getByName(String name) {
+        List<Game> games = gameDao.findByName(name);
+
+        return new HttpResponseOk<>(games);
     }
 
     /**
@@ -73,14 +68,11 @@ public class GameController {
      */
     @PostMapping("/game/update")
     @ResponseBody
-    public String updateGameName(long id, String name) {
-        try {
-            Game game = gameDao.findOne(id);
-            game.setName(name);
-            gameDao.save(game);
-        } catch (Exception ex) {
-            return "Error updating the game: " + ex.toString();
-        }
-        return "game succesfully updated!";
+    public HttpResponseOk<Game> updateGameName(long id, String name) {
+        Game game = gameDao.findOne(id);
+        game.setName(name);
+        gameDao.save(game);
+
+        return new HttpResponseOk<>(game);
     }
 }
