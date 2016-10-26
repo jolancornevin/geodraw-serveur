@@ -13,7 +13,7 @@ import java.util.Map;
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
     private String name;
     private boolean locked;
     private int maxNbPlayer;
@@ -30,7 +30,7 @@ public class Game {
 
     }
 
-    public Game(int id) {
+    public Game(Long id) {
         this.id = id;
     }
 
@@ -55,7 +55,7 @@ public class Game {
         traces = new HashMap<>();*/
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
