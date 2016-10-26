@@ -2,6 +2,7 @@ package spring.controllers;
 
 import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,6 +14,7 @@ import spring.utils.HttpResponseKo;
 import spring.utils.HttpResponseOk;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Djowood on 25/10/2016.
@@ -31,16 +33,22 @@ public class GameController {
     }
 
     @ExceptionHandler({BadHttpRequest.class, HttpMessageNotReadableException.class})
-    public
     @ResponseBody
-    ResponseEntity<HttpResponseKo> handleException(BadHttpRequest ex) {
+    public ResponseEntity<HttpResponseKo> handleException(BadHttpRequest ex) {
         return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseBody
+    public ResponseEntity<HttpResponseKo> handleException(DataIntegrityViolationException ex) {
+        return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.CONFLICT);
     }
 
     /**
      * GET /create  --> Create a new game and save it in the database.
      */
-    @PostMapping(path = "/game/create", produces = "application/json", consumes="application/json")
+    @PostMapping(path = "/game/create", produces = "application/json", consumes = "application/json")
     @ResponseBody
     @ResponseStatus(value = HttpStatus.CREATED)
     public HttpResponseOk<Game> create(@RequestBody Game game)
@@ -48,7 +56,7 @@ public class GameController {
         if (game == null)
             throw new BadHttpRequest();
 
-        gameDao.save(game);
+        game = gameDao.save(game);
 
         return new HttpResponseOk<>(game);
     }
@@ -60,11 +68,11 @@ public class GameController {
     @DeleteMapping(path = "/game/delete", produces = "application/json")
     @ResponseBody
     @ResponseStatus(value = HttpStatus.OK)
-    public HttpResponseOk<Game> delete(int id) {
+    public HttpResponseOk<Game> delete(Long id) {
         Game game = new Game(id);
         gameDao.delete(game);
 
-        return new HttpResponseOk<>(game);
+        return new HttpResponseOk<>(null);
     }
 
     /**
@@ -80,17 +88,52 @@ public class GameController {
         return new HttpResponseOk<>(games);
     }
 
-    /**
-     * GET /update  --> Update the email and the name for the game in the
-     * database having the passed id.
-     */
-    @PostMapping(path = "/game/update", produces = "application/json")
+
+    @PostMapping(path = "/game/joinGame", produces = "application/json", consumes = "application/json")
     @ResponseBody
     @ResponseStatus(value = HttpStatus.OK)
-    public HttpResponseOk<Game> updateGameName(long id, String name) {
-        Game game = gameDao.findOne(id);
-        game.setName(name);
-        gameDao.save(game);
+    public HttpResponseOk<Game> joinGame(@RequestBody Map<String, Long> json)
+            throws BadHttpRequest, DataIntegrityViolationException {
+        //Get params
+        Long idGame = json.get("idGame"), idPlayer = json.get("idPlayer");
+
+        if (idGame == null || idPlayer == null) throw new BadHttpRequest();
+
+        Game game = gameDao.findOne(idGame);
+
+        //Bad request because the id doesn't exist
+        if (game == null) throw new BadHttpRequest();
+
+        int nbPlayers = game.getCurrentNbPlayer() + 1;
+
+        //The game is complete
+        if (nbPlayers > game.getMaxNbPlayer()) throw new DataIntegrityViolationException("The game is complete");
+
+        game.setCurrentNbPlayer(nbPlayers);
+        game = gameDao.save(game);
+
+        return new HttpResponseOk<>(game);
+    }
+
+    @PostMapping(path = "/game/leaveGame", produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
+    public HttpResponseOk<Game> leaveGame(@RequestBody Map<String, Long> json)
+            throws BadHttpRequest, DataIntegrityViolationException {
+        //Get params
+        Long idGame = json.get("idGame"), idPlayer = json.get("idPlayer");
+
+        if (idGame == null || idPlayer == null) throw new BadHttpRequest();
+
+        Game game = gameDao.findOne(idGame);
+
+        //Bad request because the id doesn't exist
+        if (game == null) throw new BadHttpRequest();
+
+        int nbPlayers = game.getCurrentNbPlayer() - 1;
+
+        game.setCurrentNbPlayer(nbPlayers);
+        game = gameDao.save(game);
 
         return new HttpResponseOk<>(game);
     }

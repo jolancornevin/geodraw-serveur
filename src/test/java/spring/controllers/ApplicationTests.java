@@ -17,26 +17,40 @@
 package spring.controllers;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import spring.daos.GameDao;
 import spring.models.Game;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -49,7 +63,14 @@ public class ApplicationTests {
     @Autowired
     private GameController gameController;
 
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
+
+    @Autowired
+    private GameDao gameDao;
+    private Game game;
 
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
@@ -66,6 +87,13 @@ public class ApplicationTests {
         this.mappingJackson2HttpMessageConverter.write(
                 o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
         return mockHttpOutputMessage.getBodyAsString();
+    }
+
+    @Before
+    public void setup() throws Exception {
+        this.mockMvc = webAppContextSetup(webApplicationContext).build();
+
+        this.game = gameDao.save(new Game("testInsert", false, 1, 20, 5, 5, "avion"));
     }
 
     @Test
@@ -106,23 +134,40 @@ public class ApplicationTests {
     }
 
     @Test
-    public void shouldUpdateGame() throws Exception {
-
-        MvcResult mvcResult = mockMvc.perform(post("/people").content(
-                "{\"firstName\": \"Frodo\", \"lastName\":\"Baggins\"}")).andExpect(
-                status().isCreated()).andReturn();
-
-        String location = mvcResult.getResponse().getHeader("Location");
-
-        mockMvc.perform(put(location).content(
-                "{\"firstName\": \"Bilbo\", \"lastName\":\"Baggins\"}")).andExpect(
-                status().isNoContent());
-
-        mockMvc.perform(get(location)).andExpect(status().isOk()).andExpect(
-                jsonPath("$.firstName").value("Bilbo")).andExpect(
-                jsonPath("$.lastName").value("Baggins"));
+    public void shouldQueryUnexistantGame() throws Exception {
+        mockMvc.perform(
+                get("/game/get-by-name?name={name}", "blablablablablabla"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(true))
+                .andExpect(jsonPath("$.data[0]").doesNotExist());
     }
 
+    @Test
+    public void shouldJoinAndLeaveGame() throws Exception {
+        int nbPlayer = this.game.getCurrentNbPlayer();
+
+        mockMvc.perform
+                (
+                        post("/game/joinGame")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"idGame\": " + this.game.getId() + ", \"idPlayer\": -1}")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(true))
+                .andExpect(jsonPath("$.data.currentNbPlayer").value(nbPlayer + 1));
+
+
+        mockMvc.perform
+                (
+                        post("/game/leaveGame")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"idGame\": " + this.game.getId() + ", \"idPlayer\": -1}")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(true))
+                .andExpect(jsonPath("$.data.currentNbPlayer").value(nbPlayer));
+    }
+/*
     @Test
     public void shouldDeleteGame() throws Exception {
 
@@ -134,5 +179,5 @@ public class ApplicationTests {
         mockMvc.perform(delete(location)).andExpect(status().isNoContent());
 
         mockMvc.perform(get(location)).andExpect(status().isNotFound());
-    }
+    }*/
 }
