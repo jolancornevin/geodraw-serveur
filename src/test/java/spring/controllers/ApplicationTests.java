@@ -83,7 +83,8 @@ public class ApplicationTests {
 
     @Test
     public void shouldBadRequestCreateGame() throws Exception {
-        mockMvc.perform(post("/game/create"))
+        mockMvc.perform(post("/game/create")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 

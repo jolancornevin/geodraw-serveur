@@ -4,6 +4,7 @@ import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import spring.daos.GameDao;
@@ -29,7 +30,7 @@ public class GameController {
         return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(BadHttpRequest.class)
+    @ExceptionHandler({BadHttpRequest.class, HttpMessageNotReadableException.class})
     public
     @ResponseBody
     ResponseEntity<HttpResponseKo> handleException(BadHttpRequest ex) {
@@ -39,7 +40,7 @@ public class GameController {
     /**
      * GET /create  --> Create a new game and save it in the database.
      */
-    @PostMapping(path = "/game/create", produces = "application/json", consumes="application/json;charset=UTF-8")
+    @PostMapping(path = "/game/create", produces = "application/json", consumes="application/json")
     @ResponseBody
     @ResponseStatus(value = HttpStatus.CREATED)
     public HttpResponseOk<Game> create(@RequestBody Game game)
