@@ -30,21 +30,23 @@ public class GameController {
     }
 
     @ExceptionHandler(BadHttpRequest.class)
-    public @ResponseBody ResponseEntity<HttpResponseKo> handleException(BadHttpRequest ex) {
+    public
+    @ResponseBody
+    ResponseEntity<HttpResponseKo> handleException(BadHttpRequest ex) {
         return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     /**
      * GET /create  --> Create a new game and save it in the database.
      */
-    @PostMapping(path = "/game/create", produces = "application/json")
+    @PostMapping(path = "/game/create", produces = "application/json", consumes="application/json;charset=UTF-8")
     @ResponseBody
     @ResponseStatus(value = HttpStatus.CREATED)
-    public HttpResponseOk<Game> create(String name) throws BadHttpRequest {
-        if(name == null)
+    public HttpResponseOk<Game> create(@RequestBody Game game)
+            throws BadHttpRequest {
+        if (game == null)
             throw new BadHttpRequest();
 
-        Game game = new Game(name, false, 0, 20, 5, 5, "avion");
         gameDao.save(game);
 
         return new HttpResponseOk<>(game);
