@@ -255,7 +255,7 @@ public class Server extends Side {
     void HandleNewGame(NewGame m, SafeSocket sender) {
         int gID = id++;
 
-        Game g = new Game(gID, m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme());
+        Game g = new Game(m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme());
         g.addPlayer(m.getPlayerID());
         gameList.put(gID, g);
         subscribeToGame(sender, gID);

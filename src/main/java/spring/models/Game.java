@@ -34,7 +34,7 @@ public class Game {
         this.id = id;
     }
 
-    public Game(int id, String name, Boolean lock, int currentNbPlayer, int maxNbPlayer, int hours, int minutes, String theme) {
+    public Game(String name, Boolean lock, int currentNbPlayer, int maxNbPlayer, int hours, int minutes, String theme) {
         this.name = name;
         this.locked = lock;
         this.currentNbPlayer = currentNbPlayer;
