@@ -1,8 +1,8 @@
 package spring.models;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Djowood on 27/09/2016.
@@ -19,19 +19,19 @@ public class Player {
     @JoinTable(name = "games_players",
             joinColumns = @JoinColumn(name = "id_player", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "id_game", referencedColumnName = "ID"))
-    private List<Game> games;
+    private Set<Game> games;
 
     public Player() {
-        games = new ArrayList<>();
+        games = new HashSet<>();
     }
 
     public Player(Long id) {
-        games = new ArrayList<>();
+        games = new HashSet<>();
         this.id = id;
     }
 
     public Player(String name) {
-        games = new ArrayList<>();
+        games = new HashSet<>();
         this.id = id;
         this.name = name;
     }
@@ -52,11 +52,19 @@ public class Player {
         this.name = name;
     }
 
-    public List<Game> getGames() {
+    public Set<Game> getGames() {
         return games;
     }
 
-    public void setGames(List<Game> games) {
+    public void setGames(Set<Game> games) {
         this.games = games;
+    }
+
+    public void addGame(Game game) {
+        this.games.add(game);
+    }
+
+    public void removeGame(Game game) {
+        this.games.remove(game);
     }
 }
