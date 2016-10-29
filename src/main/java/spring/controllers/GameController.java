@@ -43,7 +43,6 @@ public class GameController extends GeneriqueController{
         return new HttpResponseOk<>(game);
     }
 
-
     /**
      * GET /delete  --> Delete the game having the passed id.
      */
@@ -68,6 +67,21 @@ public class GameController extends GeneriqueController{
         List<Game> games = gameDao.findByName(name);
 
         return new HttpResponseOk<>(games);
+    }
+
+    /**
+     * GET /get  --> Get a get by ID.
+     */
+    @GetMapping(path = "/game/get", produces = "application/json")
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
+    public HttpResponseOk<Game> get(Long id) throws BadHttpRequest {
+        if (id == null)
+            throw new BadHttpRequest();
+
+        Game game = gameDao.findOne(id);
+
+        return new HttpResponseOk<>(game);
     }
 
 
