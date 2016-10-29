@@ -20,30 +20,12 @@ import java.util.Map;
  * Created by Djowood on 25/10/2016.
  */
 @Controller
-public class GameController {
+public class GameController extends GeneriqueController{
 
     // Private fields
 
     @Autowired
     private GameDao gameDao;
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<HttpResponseKo> handleException(Exception ex) {
-        return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler({BadHttpRequest.class, HttpMessageNotReadableException.class})
-    @ResponseBody
-    public ResponseEntity<HttpResponseKo> handleException(BadHttpRequest ex) {
-        return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseBody
-    public ResponseEntity<HttpResponseKo> handleException(DataIntegrityViolationException ex) {
-        return new ResponseEntity<>(new HttpResponseKo(ex.getMessage()), HttpStatus.CONFLICT);
-    }
 
     /**
      * GET /create  --> Create a new game and save it in the database.
