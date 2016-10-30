@@ -150,25 +150,47 @@ public class GameTests {
                 (
                         post("/game/joinGame")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"idGame\": " + this.game.getId() + ", \"idPlayer\": -1}")
+                                .content("{\"idGame\": " + this.game.getId() + ", \"idPlayer\": 1}")
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(true))
                 .andExpect(jsonPath("$.data.currentNbPlayer").value(nbPlayer + 1));
 
-
         mockMvc.perform
                 (
                         post("/game/leaveGame")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"idGame\": " + this.game.getId() + ", \"idPlayer\": -1}")
+                                .content("{\"idGame\": " + this.game.getId() + ", \"idPlayer\": 1}")
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(true))
                 .andExpect(jsonPath("$.data.currentNbPlayer").value(nbPlayer));
     }
-/*
+
     @Test
+    public void shouldNotJoinFullGame() throws Exception {
+        //todo recuperer l'id du game une fois créé
+        Game game = new Game("testInsert", false, 0, 5, 5, "avion");
+        mockMvc.perform
+                (
+                        post("/game/create")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(game))
+                )
+                .andExpect(status().isCreated());
+
+        mockMvc.perform
+                (
+                        post("/game/joinGame")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"idGame\": " + game.getId() + ", \"idPlayer\": 1}")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(false));
+
+    }
+
+    /*@Test
     public void shouldDeleteGame() throws Exception {
 
         MvcResult mvcResult = mockMvc.perform(post("/people").content(

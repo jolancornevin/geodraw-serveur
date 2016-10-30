@@ -90,8 +90,8 @@ public class Server extends Side {
     public List<GameInfo> getGameListFor(String userID) {
         List<GameInfo> lst = new LinkedList<>();
         for (Game g : gameList.values()) {
-            if (g.hasPlayer(userID))
-                lst.add(new GameInfo(g));
+            /*if (g.hasPlayer(userID))
+                lst.add(new GameInfo(g));*/
         }
         return lst;
     }
@@ -238,8 +238,8 @@ public class Server extends Side {
 
         if (m.isObserver())
             sendMessageTo(sender, new JoinedGame(true));
-        else
-            sendMessageTo(sender, new JoinedGame(g.addPlayer(m.getPlayerID())));
+        /*else
+            sendMessageTo(sender, new JoinedGame(g.addPlayer(m.getPlayerID())));*/
     }
 
     /**

@@ -30,6 +30,9 @@ public class GameController extends GeneriqueController{
     @Autowired
     private GameDao gameDao;
 
+    @Autowired
+    private PlayerDao playerDao;
+
     /**
      * GET /create  --> Create a new game and save it in the database.
      */
@@ -93,22 +96,26 @@ public class GameController extends GeneriqueController{
     @ResponseStatus(value = HttpStatus.OK)
     public HttpResponseOk<Game> joinGame(@RequestBody Map<String, Long> json)
             throws BadHttpRequest, DataIntegrityViolationException {
+        Game game;
+        Player player;
+        Long idGame, idPlayer;
+
         //Get params
-        Long idGame = json.get("idGame"), idPlayer = json.get("idPlayer");
+        idGame = json.get("idGame");
+        idPlayer = json.get("idPlayer");
 
         if (idGame == null || idPlayer == null) throw new BadHttpRequest();
 
-        Game game = gameDao.findOne(idGame);
-
         //Bad request because the id doesn't exist
-        if (game == null) throw new BadHttpRequest();
-
-        int nbPlayers = game.getCurrentNbPlayer() + 1;
+        if ((game = gameDao.findOne(idGame)) == null) throw new BadHttpRequest();
+        //Bad request because the id doesn't exist
+        if ((player = playerDao.findOne(idPlayer)) == null) throw new BadHttpRequest();
 
         //The game is complete
-        if (nbPlayers > game.getMaxNbPlayer()) throw new DataIntegrityViolationException("The game is complete");
+        if ((game.getCurrentNbPlayer() + 1) > game.getMaxNbPlayer()) throw new DataIntegrityViolationException("The game is complete");
 
-        game.setCurrentNbPlayer(nbPlayers);
+        game.addPlayer(player);
+
         game = gameDao.save(game);
 
         return new HttpResponseOk<>(game);
@@ -119,19 +126,25 @@ public class GameController extends GeneriqueController{
     @ResponseStatus(value = HttpStatus.OK)
     public HttpResponseOk<Game> leaveGame(@RequestBody Map<String, Long> json)
             throws BadHttpRequest, DataIntegrityViolationException {
+        Game game;
+        Player player;
+        Long idGame, idPlayer;
+
         //Get params
-        Long idGame = json.get("idGame"), idPlayer = json.get("idPlayer");
+        idGame = json.get("idGame");
+        idPlayer = json.get("idPlayer");
 
         if (idGame == null || idPlayer == null) throw new BadHttpRequest();
 
-        Game game = gameDao.findOne(idGame);
-
         //Bad request because the id doesn't exist
-        if (game == null) throw new BadHttpRequest();
+        if ((game = gameDao.findOne(idGame)) == null) throw new BadHttpRequest();
+        //Bad request because the id doesn't exist
+        if ((player = playerDao.findOne(idPlayer)) == null) throw new BadHttpRequest();
 
-        int nbPlayers = game.getCurrentNbPlayer() - 1;
+        //The game is complete
+        if (!game.hasPlayer(player)) throw new DataIntegrityViolationException("The player does not belong to the game");
 
-        game.setCurrentNbPlayer(nbPlayers);
+        game.removePlayer(player);
         game = gameDao.save(game);
 
         return new HttpResponseOk<>(game);
