@@ -93,7 +93,7 @@ public class GameTests {
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
 
-        this.game = gameDao.save(new Game("testInsert", false, 1, 20, 5, 5, "avion"));
+        this.game = gameDao.save(new Game("testInsert", false, 20, 5, 5, "avion"));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class GameTests {
                 (
                         post("/game/create")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(json(new Game("testInsert", false, 1, 20, 5, 5, "avion")))
+                                .content(json(new Game("testInsert", false, 20, 5, 5, "avion")))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value(true))
@@ -122,7 +122,7 @@ public class GameTests {
                 (
                         post("/game/create")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(json(new Game("testInsert", false, 1, 20, 5, 5, "avion")))
+                                .content(json(new Game("testInsert", false, 20, 5, 5, "avion")))
                 )
                 .andExpect(status().isCreated());
 

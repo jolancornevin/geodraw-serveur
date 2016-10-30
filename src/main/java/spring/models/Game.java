@@ -1,15 +1,17 @@
 package spring.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Djowood on 27/09/2016.
  */
 @Entity
 @Table(name = "game")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,27 +19,31 @@ public class Game {
     private String name;
     private boolean locked;
     private int maxNbPlayer;
-    private int currentNbPlayer;
     private Date startDate;
     private Date endDate;
 
     private String theme;
 
-    /*private Map<String, Integer> players;
-    private Map<String, Drawing> traces;
-*/
-    public Game(){
+    @ManyToMany
+    @JoinTable(name = "games_players",
+            joinColumns = @JoinColumn(name = "id_game", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "id_player", referencedColumnName = "ID"))
+    private Set<Player> players;
 
+    /*private Map<String, Drawing> traces;*/
+
+    public Game() {
+        players = new HashSet<>();
     }
 
     public Game(Long id) {
+        players = new HashSet<>();
         this.id = id;
     }
 
-    public Game(String name, Boolean lock, int currentNbPlayer, int maxNbPlayer, int hours, int minutes, String theme) {
+    public Game(String name, Boolean lock, int maxNbPlayer, int hours, int minutes, String theme) {
         this.name = name;
         this.locked = lock;
-        this.currentNbPlayer = currentNbPlayer;
         this.maxNbPlayer = maxNbPlayer;
         this.theme = theme;
 
@@ -51,8 +57,8 @@ public class Game {
 
         this.id = id;
 
-        /*players = new HashMap<>();
-        traces = new HashMap<>();*/
+        players = new HashSet<>();
+        /*traces = new HashMap<>();*/
     }
 
     public Long getId() {
@@ -68,41 +74,34 @@ public class Game {
     }
 
     public int getCurrentNbPlayer() {
-        return currentNbPlayer;
+        return this.players.size();
     }
 
     /**
      * Adds a player to the current game
      *
-     * @param playerID : The player's ID (pseudo)
+     * @param player : The player
      * @return true if the player has been successfully added, false otherwise
      */
-    public boolean addPlayer(String playerID) {
-        /*if (currentNbPlayer < maxNbPlayer) {
-            if (players.containsKey(playerID))
-                return true;
-            players.put(playerID, 0);
-            currentNbPlayer++;
+    public boolean addPlayer(Player player) {
+        if (this.players.size() < maxNbPlayer) {
+            this.players.add(player);
+
             return true;
-        }*/
+        }
         return false;
     }
 
-    public void removePlayer(String playerID) {
-        /*if (players.containsKey(playerID)) {
-            players.remove(playerID);
-            currentNbPlayer--;
-        }*/
+    public void removePlayer(Player player) {
+        players.remove(player);
     }
 
-    public boolean hasPlayer(String name) {
-        //return players.containsKey(name);
-        return false;
+    public boolean hasPlayer(Player player) {
+        return players.contains(player);
     }
 
-    public Map<String, Integer> getPlayers() {
-        //return players;
-        return null;
+    public Set<Player> getPlayers() {
+        return players;
     }
 
     public int getMaxNbPlayer() {
@@ -148,10 +147,6 @@ public class Game {
         this.maxNbPlayer = maxNbPlayer;
     }
 
-    public void setCurrentNbPlayer(int currentNbPlayer) {
-        this.currentNbPlayer = currentNbPlayer;
-    }
-
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
@@ -164,8 +159,8 @@ public class Game {
         this.theme = theme;
     }
 
-    public void setPlayers(Map<String, Integer> players) {
-        //this.players = players;
+    public void setPlayers(Set<Player> players) {
+        this.players = players;
     }
 
     public Map<String, Drawing> getTraces() {
