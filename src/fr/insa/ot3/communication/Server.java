@@ -103,6 +103,8 @@ public class Server extends Side {
     private transient boolean interrupted = false;
 
     public void start() {
+    	
+    	//TODO : load live elements from database
         socketCreator = new Thread("Server Socket creator") {
             public void run() {
                 while (!interrupted) {
@@ -126,6 +128,9 @@ public class Server extends Side {
                     preIndex = finishedGames.size();
 
                     Date now = new Date();
+                    
+
+                	//TODO : Don't keep finished games as is, but instead save traces in DB
                     for (Game g : gameList.values()) {
                         if (now.after(g.getEndDate()))
                             finishedGames.add(g);
@@ -133,6 +138,7 @@ public class Server extends Side {
 
 
                     postIndex = finishedGames.size();
+                    //TODO : Now finishedGames can be changed into a local variable
                     if (postIndex > preIndex) // if there is some new finished games
                     {
                         for (int i = preIndex; i < postIndex; i++) {
@@ -166,6 +172,7 @@ public class Server extends Side {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    	//TODO : save live elements in database
 
         System.err.println("Server stopped");
     }
