@@ -23,6 +23,10 @@ public class PlayerController extends GeneriqueController {
     @Autowired
     private PlayerDao playerDao;
 
+    public PlayerDao getPlayerDao() {
+        return playerDao;
+    }
+
     /**
      * GET /create  --> Create a new player and save it in the database.
      */

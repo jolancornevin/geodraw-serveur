@@ -30,6 +30,10 @@ public class GameController extends GeneriqueController{
     @Autowired
     private GameDao gameDao;
 
+    public GameDao getGameDao() {
+        return gameDao;
+    }
+
     @Autowired
     private PlayerDao playerDao;
 

@@ -2,8 +2,9 @@ package spring.communication;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
-
 import spring.communication.message.*;
+import spring.controllers.PlayerController;
+import spring.daos.PlayerDao;
 import spring.models.Game;
 import spring.models.GameInfo;
 import spring.models.LatLng;
@@ -12,7 +13,6 @@ import spring.utils.Utils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.nio.charset.Charset;
 import java.util.*;
 
 public class Server extends Side {
@@ -22,67 +22,56 @@ public class Server extends Side {
     private transient Thread socketCreator;
     private transient Thread gameCleaner;
 
-    private final Map<Integer, Game> gameList;
+    private final Map<Integer, Game> currentGamesList;
     private final List<Game> finishedGames;
     private final transient Map<Integer, List<SafeSocket>> gameSubscribers;
 
     private int id = 0;
-
+/*
     public static void main(String[] args) {
         System.out.println("Debut du serveur");
 
-        Server s;
+        Configuration cfg = new Configuration();
+        cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLInnoDBDialect");
 
-        try {
-            String serverSave = Utils.readFile("./server.json", Charset.defaultCharset());
-            s = Utils.gson.fromJson(serverSave, Server.class);
-        } catch (Exception e) {
-            s = new Server();
-        }
+        SpringApplication.run(Server.class, args);
 
+        //Instanciation du serveur
+        Server s = new Server();
+        //Démarrage et chargement des données
         s.start();
 
         @SuppressWarnings("resource")
         Scanner sc = new Scanner(System.in);
         sc.nextLine();
 
-        s.stop();
-
-        String serverSave = Utils.gson.toJson(s);
-
-        PrintWriter writer;
-        try {
-            writer = new PrintWriter("./server.json", "UTF-8");
-            writer.print(serverSave);
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+       // s.stop();
 
         System.out.println("Fin du serveur");
     }
+*/
 
     public Server() {
         super();
 
-        gameList = new HashMap<Integer, Game>();
-        finishedGames = new LinkedList<Game>();
-        gameSubscribers = new HashMap<Integer, List<SafeSocket>>();
+        currentGamesList = new HashMap<>();
+        finishedGames = new LinkedList<>();
+        gameSubscribers = new HashMap<>();
 
-        sockets = new LinkedList<SafeSocket>();
+        sockets = new LinkedList<>();
         breakdown.add(new ServerBreak());
 
         try {
-            servSock = new ServerSocket(8080);
+            servSock = new ServerSocket(8888);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public List<GameInfo> getGameList() {
+    public List<GameInfo> getCurrentGamesList() {
         List<GameInfo> lst = new LinkedList<>();
-        for (Game g : gameList.values()) {
+        for (Game g : currentGamesList.values()) {
             lst.add(new GameInfo(g));
         }
         return lst;
@@ -91,7 +80,8 @@ public class Server extends Side {
 
     public List<GameInfo> getGameListFor(Long userID) {
         List<GameInfo> lst = new LinkedList<>();
-        for (Game g : gameList.values()) {
+        for (Game g : currentGamesList.values()) {
+            //TODO remplacer l'ID par le player
             /*if (g.hasPlayer(userID))
                 lst.add(new GameInfo(g));*/
         }
@@ -101,6 +91,7 @@ public class Server extends Side {
     private transient boolean interrupted = false;
 
     public void start() {
+        //TODO : load live elements from database
         socketCreator = new Thread("Server Socket creator") {
             public void run() {
                 while (!interrupted) {
@@ -124,17 +115,19 @@ public class Server extends Side {
                     preIndex = finishedGames.size();
 
                     Date now = new Date();
-                    for (Game g : gameList.values()) {
+
+                    //TODO : Don't keep finished games as is, but instead save traces in DB
+                    for (Game g : currentGamesList.values()) {
                         if (now.after(g.getEndDate()))
                             finishedGames.add(g);
                     }
 
-
                     postIndex = finishedGames.size();
+                    //TODO : Now finishedGames can be changed into a local variable
                     if (postIndex > preIndex) // if there is some new finished games
                     {
                         for (int i = preIndex; i < postIndex; i++) {
-                            gameList.remove(finishedGames.get(i).getId());
+                            currentGamesList.remove(finishedGames.get(i).getId());
                         }
                     }
 
@@ -154,9 +147,9 @@ public class Server extends Side {
         try {
             interrupted = true;
             gameCleaner.interrupt();
-            Client c = new Client("localhost", 8080);
+            //Client c = new Client("localhost", 8080);
             Thread.sleep(500);
-            c.disconnect();
+            //c.disconnect();
             servSock.close();
             socketCreator.join();
         } catch (InterruptedException e) {
@@ -164,6 +157,7 @@ public class Server extends Side {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //TODO : save live elements in database
 
         System.err.println("Server stopped");
     }
@@ -212,8 +206,8 @@ public class Server extends Side {
     void HandleTraceMessage(TraceMessage m, SafeSocket sender) {
         this.sendMessageToGame(m.getGameID(), m);
 
-        if (gameList.containsKey(m.getGameID()))
-            gameList.get(m.getGameID()).updateTrace(m.getPlayerID(), m.getTrace());
+        if (currentGamesList.containsKey(m.getGameID()))
+            currentGamesList.get(m.getGameID()).updateTrace(m.getPlayerID(), m.getTrace());
     }
 
     /**
@@ -229,14 +223,15 @@ public class Server extends Side {
         if (m.isSelf())
             sendMessageTo(sender, new GameList(getGameListFor(m.getUserID()), true));
         else
-            sendMessageTo(sender, new GameList(getGameList(), false));
+            sendMessageTo(sender, new GameList(getCurrentGamesList(), false));
     }
 
     @Override
     void HandleJoinGame(JoinGame m, SafeSocket sender) {
-        if (!gameList.containsKey(m.getGameID()))
+        if (!currentGamesList.containsKey(m.getGameID()))
             sendMessageTo(sender, new JoinedGame(false));
-        Game g = gameList.get(m.getGameID());
+
+        Game g = currentGamesList.get(m.getGameID());
 
         subscribeToGame(sender, m.getGameID());
 
@@ -274,8 +269,9 @@ public class Server extends Side {
         int gID = id++;
 
         Game g = new Game(m.getName(), m.isLock(), m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme());
+        //TODO à remplacer par le player
         //g.addPlayer(m.getPlayerID());
-        gameList.put(gID, g);
+        currentGamesList.put(gID, g);
         subscribeToGame(sender, gID);
     }
 
@@ -293,12 +289,12 @@ public class Server extends Side {
     void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
         System.out.println(Utils.gson.toJson(m));
         sendMessageToGame(m.getGameID(), m);
-        gameList.get(m.getGameID()).getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
+        currentGamesList.get(m.getGameID()).getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
     }
 
     @Override
     void HandleGameUpdate(GameUpdate m, SafeSocket sender) {
-        // TODO Auto-generated method stub
+        // Auto-generated method stub
     }
 
     @Override
