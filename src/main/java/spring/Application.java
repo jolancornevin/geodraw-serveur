@@ -11,6 +11,7 @@ import spring.communication.Client;
 import spring.communication.Server;
 import spring.communication.message.JoinGame;
 import spring.communication.message.NewGame;
+import spring.communication.message.TraceMessage;
 import spring.controllers.GameController;
 import spring.controllers.PlayerController;
 import spring.utils.Connexion;

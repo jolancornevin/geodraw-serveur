@@ -15,20 +15,15 @@ public class TraceMessage extends Message {
         this.playerID = playerID;
     }
 
-
     public Drawing getTrace() {
         return trace;
     }
-
 
     public Long getGameID() {
         return gameID;
     }
 
-
     public Long getPlayerID() {
         return playerID;
     }
-
-
 }
