@@ -2,6 +2,7 @@ package spring.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import spring.utils.Utils;
 
 import javax.persistence.*;
 import java.util.*;
@@ -30,7 +31,7 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "id_player", referencedColumnName = "ID"))
     private Set<Player> players;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "game")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
     private List<Trace> bdTraces;
 
     @Transient
@@ -44,11 +45,14 @@ public class Game {
     ================================================================================================================= */
     public Game() {
         players = new HashSet<>();
-        votes = new HashMap<Long, Integer>();
+        traces = new HashMap<>();
+        votes = new HashMap<>();
     }
 
     public Game(Long id) {
         players = new HashSet<>();
+        traces = new HashMap<>();
+        votes = new HashMap<>();
         this.id = id;
     }
 
@@ -68,15 +72,17 @@ public class Game {
         c.add(Calendar.MINUTE, minutes);
 
         players = new HashSet<>();
-        /*traces = new HashMap<>();*/
+        traces = new HashMap<>();
+        votes = new HashMap<>();
     }
 
     public List<Trace> getBdTraces() {
         return bdTraces;
     }
 
-    public void addTrace(Trace trace) {
+    public void addBdTrace(Trace trace) {
         this.bdTraces.add(trace);
+        setTracesFromBd();
     }
 
     public Long getId() {
@@ -160,11 +166,17 @@ public class Game {
         return theme;
     }
 
+    /**
+     * Renvoit le drawing d'un utilisateur. Si il n'existe pas, on le créer
+     *
+     * @param playerID
+     * @return
+     */
     public Drawing getTrace(Long playerID) {
-        if (traces.containsKey(playerID))
-            return traces.get(playerID);
+        if (!traces.containsKey(playerID))
+            traces.put(playerID, new Drawing());
 
-        return null;
+        return traces.get(playerID);
     }
 
     public void updateTrace(Long playerID, Drawing newTrace) {
@@ -204,6 +216,7 @@ public class Game {
     }
 
     public Map<Long, Drawing> getTraces() {
+        setTracesFromBd();
         return traces;
     }
 
@@ -219,11 +232,40 @@ public class Game {
      * Met à jours l'attribut bdTraces pour le sauvegarder dans la base de données
      */
     public void setBdTraces() {
-        bdTraces.clear();
-        for (Map.Entry<Long, Drawing> trace : traces.entrySet()) {
-            Trace tr = new Trace(this, (getPlayer(trace.getKey())));
-            tr.setTrace(trace.getValue().toJson());
-            bdTraces.add(tr);
+        for (Map.Entry<Long, Drawing> entryTrace : traces.entrySet()) {
+            Trace trace = null;
+            //On parcours toutes les traces existantes
+            for (Trace tr : bdTraces) {
+                //Si la trace existait déjà, on la récupère
+                if (tr.getIdPlayer().equals(entryTrace.getKey())) {
+                    trace = tr;
+                    break;
+                }
+            }
+
+            //La trace est null, elle n'existait pas avant, donc on la créer
+            if (trace == null)
+                trace = new Trace(this, (entryTrace.getKey()));
+
+            //On set le drawing dans la trace
+            trace.setJsonTrace(Utils.gson.toJson(entryTrace.getValue()));
+
+            int index = bdTraces.indexOf(trace);
+            //Si la list bdTraces contenait déjà la trace, on la supprime, pour la remetre juste après
+            // (on ne peux pas faire de update)
+            if (index != -1)
+                bdTraces.remove(index);
+
+            bdTraces.add(trace);
+        }
+    }
+
+    /**
+     *
+     */
+    public void setTracesFromBd() {
+        for (Trace trace : bdTraces) {
+            traces.put(trace.getIdPlayer(), Utils.gson.fromJson(trace.getJsonTrace(), Drawing.class));
         }
     }
 

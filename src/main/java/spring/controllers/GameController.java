@@ -10,7 +10,6 @@ import spring.daos.GameDao;
 import spring.daos.PlayerDao;
 import spring.models.Game;
 import spring.models.Player;
-import spring.models.Trace;
 import spring.utils.HttpResponseOk;
 
 import javax.transaction.Transactional;
@@ -103,31 +102,7 @@ public class GameController extends GeneriqueController {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.OK)
     public HttpResponseOk<List<Game>> _getAll() throws BadHttpRequest {
-        List<Game> games = getAll();
-
-        return new HttpResponseOk<>(games);
-    }
-
-    /**
-     * GET /getAllWithPlayers
-     */
-    @GetMapping(path = "/game/getAllWithPlayers", produces = "application/json")
-    @ResponseBody
-    @ResponseStatus(value = HttpStatus.OK)
-    public HttpResponseOk<List<Game>> _getAllWithPlayers() throws BadHttpRequest {
-        List<Game> games = getAllWithPlayers();
-
-        return new HttpResponseOk<>(games);
-    }
-
-    /**
-     * GET /getAllWithPlayers
-     */
-    @GetMapping(path = "/game/getByIdWithPlayers", produces = "application/json")
-    @ResponseBody
-    @ResponseStatus(value = HttpStatus.OK)
-    public HttpResponseOk<List<Game>> _getByIdWithPlayers(Long id) throws BadHttpRequest {
-        List<Game> games = getByIdWithPlayers(id);
+        List<Game> games = getAllWithPlayersAndTraces();
 
         return new HttpResponseOk<>(games);
     }
@@ -138,20 +113,20 @@ public class GameController extends GeneriqueController {
     public HttpResponseOk<Game> _joinGame(@RequestBody Map<String, Long> json)
             throws BadHttpRequest, DataIntegrityViolationException {
         Long idGame, idPlayer;
+        Game game;
 
         //Get params
         idGame = json.get("idGame");
         idPlayer = json.get("idPlayer");
 
-        Game game = joinGame(idGame, idPlayer);
+        game = joinGame(idGame, idPlayer);
 
         return new HttpResponseOk<>(game);
     }
 
     public Game joinGame(Long idGame, Long idPlayer) throws BadHttpRequest {
-        Game game;
         Player player;
-
+        Game game;
         if (idGame == null || idPlayer == null) throw new BadHttpRequest();
 
         //Bad request because the id doesn't exist
@@ -202,26 +177,18 @@ public class GameController extends GeneriqueController {
         return new HttpResponseOk<>(game);
     }
 
-    public List<Game> getAll() {
-        return (List) gameDao.findAll();
-    }
-
-    public List<Game> getAllWithPlayers() {
-        return (List) gameDao.findAllWithPlayer();
-    }
-
-    public void addTrace(Game game, Trace trace) {
-        game.addTrace(trace);
-        gameDao.save(game);
-    }
-
-    public Game getTraces(Game game) {
-        game.getTraces();
-        return game;
-    }
-
-    public List<Game> getByIdWithPlayers(Long id) {
-        return (List) gameDao.findByIdWithPlayer(id);
+    /**
+     * Récupère la liste des games sur le serveur (avec les traces et les players)
+     * Ensuite, comme les traces sont stocké en JSON pour le moment, on les parse pour les mettre en objet
+     *
+     * @return
+     */
+    public List<Game> getAllWithPlayersAndTraces() {
+        List<Game> games = (List) gameDao.findAll();
+        for(Game game : games){
+            game.setTracesFromBd();
+        }
+        return games;
     }
 
     public Game save(Game game) {

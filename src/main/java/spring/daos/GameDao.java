@@ -19,10 +19,4 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "game", path = "game")
 public interface GameDao extends CrudRepository<Game, Long> {
     List<Game> findByName(String game);
-
-    @Query("SELECT g FROM Game g LEFT JOIN FETCH g.players")
-    List<Game> findAllWithPlayer();
-
-    @Query("SELECT g FROM Game g LEFT JOIN FETCH g.players WHERE g.id = (:id)")
-    List<Game> findByIdWithPlayer(@Param("id") Long id);
 }

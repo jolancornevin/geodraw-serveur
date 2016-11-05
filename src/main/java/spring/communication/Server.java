@@ -4,6 +4,7 @@ import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
 import javassist.tools.web.BadHttpRequest;
 import spring.communication.message.*;
+import spring.models.Drawing;
 import spring.models.Game;
 import spring.models.GameInfo;
 import spring.utils.Connexion;
@@ -58,7 +59,7 @@ public class Server extends Side {
     ================================================================================================================= */
 
     public void start() {
-        for (Game game : Connexion.getInstance().getGameController().getAllWithPlayers()) {
+        for (Game game : Connexion.getInstance().getGameController().getAllWithPlayersAndTraces()) {
             currentGamesList.put(game.getId(), game);
         }
 
@@ -170,47 +171,17 @@ public class Server extends Side {
 
             subscribeToGame(sender, m.getGameID());
         } else {
-            boolean joined = joinGameInBd(m.getGameID(), m.getPlayerID());
-            sendMessageTo(sender, new JoinedGame(joined));
+            Game game = joinGameInBd(m.getGameID(), m.getPlayerID());
+            // TODO bug ??
+            // sendMessageTo(sender, new JoinedGame(joined));
 
-            if (joined) {
-
+            if (game != null) {
                 subscribeToGame(sender, m.getGameID());
-                /*
-                Segment segment1 = new Segment();
-                segment1.addLatLng(new LatLng(10, 10));
-                segment1.addLatLng(new LatLng(10, 11));
-                segment1.addLatLng(new LatLng(12, 14));
-                segment1.addLatLng(new LatLng(15, 2));
-
-                Segment segment2 = new Segment();
-                segment2.addLatLng(new LatLng(24, 13));
-                segment2.addLatLng(new LatLng(24, 15));
-                segment2.addLatLng(new LatLng(26, 8));
-                segment2.addLatLng(new LatLng(28, 4));
-
-                Segment segment3 = new Segment();
-                segment3.addLatLng(new LatLng(32, 12));
-                segment3.addLatLng(new LatLng(32, 13));
-                segment3.addLatLng(new LatLng(34, 16));
-                segment3.addLatLng(new LatLng(32, 4));
-
-                Segment segment4 = new Segment();
-                segment4.addLatLng(new LatLng(46, 15));
-                segment4.addLatLng(new LatLng(46, 17));
-                segment4.addLatLng(new LatLng(48, 10));
-                segment4.addLatLng(new LatLng(40, 6));
-
-                Drawing g = new Drawing();
-                g.addSegment(segment1);
-                g.addSegment(segment2);
-
-                Drawing h = new Drawing();
-                h.addSegment(segment3);
-                h.addSegment(segment4);
-
-                sendMessageTo(sender, new TraceMessage(g, m.getGameID(), "adrn"));
-                sendMessageTo(sender, new TraceMessage(h, m.getGameID(), "adrn"));*/
+                //Send drawings to client
+                for (Map.Entry<Long, Drawing> drawing : game.getTraces().entrySet()) {
+                    // TODO bug ??
+                    //sendMessageTo(sender, new TraceMessage(drawing.getValue(), m.getGameID(), drawing.getKey()));
+                }
             }
         }
     }
@@ -235,7 +206,7 @@ public class Server extends Side {
         }
 
         //Join the game
-        if (joinGameInBd(g.getId(), m.getPlayerID())) {
+        if ((g = joinGameInBd(g.getId(), m.getPlayerID())) != null) {
             currentGamesList.put(g.getId(), g);
             subscribeToGame(sender, g.getId());
         } else {
@@ -260,7 +231,8 @@ public class Server extends Side {
         Game game = currentGamesList.get(m.getGameID());
 
         //Add the latlng to the java objet
-        game.getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
+        Drawing trace = game.getTrace(m.getUserID());
+        trace.addLatLng(m.getLatLng(), m.isDrawing());
 
         //Save it to the database
         Connexion.getInstance().getGameController().save(game);
@@ -357,14 +329,13 @@ public class Server extends Side {
 
     }
 
-    private boolean joinGameInBd(Long gameId, Long playerId) {
+    private Game joinGameInBd(Long gameId, Long playerId) {
         try {
-            Connexion.getInstance().getGameController().joinGame(gameId, playerId);
-            return true;
+            return Connexion.getInstance().getGameController().joinGame(gameId, playerId);
         } catch (BadHttpRequest badHttpRequest) {
             badHttpRequest.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     private void subscribeToGame(SafeSocket s, Long gameID) {

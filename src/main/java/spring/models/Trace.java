@@ -16,34 +16,43 @@ public class Trace {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_player")
-    private Player player;
+    private Long id_player;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_game")
     private Game game;
 
-    private String trace;
+    private String jsonTrace;
 
-    public Trace(Game game, Player player) {
+    public Trace(Game game, Long id_player) {
         this.game = game;
-        this.player = player;
+        this.id_player = id_player;
+    }
+
+    /**
+     * Required by JPA
+     */
+    public Trace() {
+
     }
 
     public Trace(Long id) {
         this.id = id;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Long getIdPlayer() {
+        return id_player;
     }
 
     public Game getGame() {
         return game;
     }
 
-    public void setTrace(String json){
-        this.trace = json;
+    public void setJsonTrace(String json) {
+        this.jsonTrace = json;
+    }
+
+    public String getJsonTrace() {
+        return jsonTrace;
     }
 }

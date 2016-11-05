@@ -64,7 +64,6 @@ public class GameTests {
 
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
-
         this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream().filter(
                 hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().get();
 
