@@ -2,6 +2,8 @@ package spring.communication;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
+
+import fr.insa.ot3.model.LatLng;
 import spring.communication.message.*;
 import spring.models.Game;
 import spring.models.GameInfo;
@@ -250,6 +252,7 @@ public class Server extends Side {
         }*/
         
         if(joined) {
+        	g.getTrace(m.getPlayerID()).addLatLng(new LatLng(0, 0), false);
         	sendMessageToGame(m.getGameID(), new AddLatLng(m.getPlayerID(), m.getGameID(), new LatLng(0, 0), false));
         	sendMessageTo(sender, new GameUpdate(g));
         }
