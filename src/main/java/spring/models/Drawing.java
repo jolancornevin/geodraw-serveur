@@ -35,5 +35,11 @@ public class Drawing {
         trace.get(trace.size() - 1).addLatLng(latLng);
     }
 
-
+    public String toJson() {
+        String str = "[";
+        for (Segment segment : this.trace) {
+            str += segment.toJson();
+        }
+        return str + "]";
+    }
 }

@@ -3,15 +3,13 @@ package spring.communication;
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
 import spring.communication.message.*;
-import spring.controllers.PlayerController;
-import spring.daos.PlayerDao;
 import spring.models.Game;
 import spring.models.GameInfo;
 import spring.models.LatLng;
+import spring.utils.Connexion;
 import spring.utils.Utils;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.util.*;
 
@@ -22,34 +20,12 @@ public class Server extends Side {
     private transient Thread socketCreator;
     private transient Thread gameCleaner;
 
-    private final Map<Integer, Game> currentGamesList;
+    private final Map<Long, Game> currentGamesList;
     private final List<Game> finishedGames;
-    private final transient Map<Integer, List<SafeSocket>> gameSubscribers;
+    private final transient Map<Long, List<SafeSocket>> gameSubscribers;
 
-    private int id = 0;
-/*
-    public static void main(String[] args) {
-        System.out.println("Debut du serveur");
-
-        Configuration cfg = new Configuration();
-        cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLInnoDBDialect");
-
-        SpringApplication.run(Server.class, args);
-
-        //Instanciation du serveur
-        Server s = new Server();
-        //Démarrage et chargement des données
-        s.start();
-
-        @SuppressWarnings("resource")
-        Scanner sc = new Scanner(System.in);
-        sc.nextLine();
-
-       // s.stop();
-
-        System.out.println("Fin du serveur");
-    }
-*/
+    private transient boolean interrupted = false;
+    private Long id = 0L;
 
     public Server() {
         super();
@@ -66,38 +42,19 @@ public class Server extends Side {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
-    public List<GameInfo> getCurrentGamesList() {
-        List<GameInfo> lst = new LinkedList<>();
-        for (Game g : currentGamesList.values()) {
-            lst.add(new GameInfo(g));
-        }
-        return lst;
-    }
-
-
-    public List<GameInfo> getGameListFor(Long userID) {
-        List<GameInfo> lst = new LinkedList<>();
-        for (Game g : currentGamesList.values()) {
-            //TODO remplacer l'ID par le player
-            /*if (g.hasPlayer(userID))
-                lst.add(new GameInfo(g));*/
-        }
-        return lst;
-    }
-
-    private transient boolean interrupted = false;
 
     public void start() {
         //TODO : load live elements from database
+        for(Game game : Connexion.getInstance().getGameController().getAllWithPlayers()) {
+            currentGamesList.put(game.getId(), game);
+        }
+
         socketCreator = new Thread("Server Socket creator") {
             public void run() {
                 while (!interrupted) {
                     try {
                         SafeSocket s = new SafeSocket(servSock, HEART_BEAT_RATE, TIMEOUT, mess, breakdown);
-
                         sockets.add(s);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -105,29 +62,23 @@ public class Server extends Side {
                 }
             }
         };
-        socketCreator.start();
 
+        //Job tournant toutes les secondes, pour voir si des game on finis.
         gameCleaner = new Thread("Server finished games cleaner") {
             public void run() {
                 int preIndex, postIndex;
                 while (!interrupted) {
-
-                    preIndex = finishedGames.size();
-
                     Date now = new Date();
 
-                    //TODO : Don't keep finished games as is, but instead save traces in DB
+                    //TODO : save traces and game in DB --> add method in controller
                     for (Game g : currentGamesList.values()) {
-                        if (now.after(g.getEndDate()))
-                            finishedGames.add(g);
-                    }
+                        if (!g.isOver() && now.after(g.getEndDate())) {
+                            g.setOver(true);
 
-                    postIndex = finishedGames.size();
-                    //TODO : Now finishedGames can be changed into a local variable
-                    if (postIndex > preIndex) // if there is some new finished games
-                    {
-                        for (int i = preIndex; i < postIndex; i++) {
-                            currentGamesList.remove(finishedGames.get(i).getId());
+                            finishedGames.add(g);
+                            currentGamesList.remove(g.getId());
+
+                            Connexion.getInstance().getGameDao().save(g);
                         }
                     }
 
@@ -140,6 +91,8 @@ public class Server extends Side {
                 }
             }
         };
+
+        socketCreator.start();
         gameCleaner.start();
     }
 
@@ -162,6 +115,25 @@ public class Server extends Side {
         System.err.println("Server stopped");
     }
 
+    public List<GameInfo> getCurrentGamesList() {
+        List<GameInfo> lst = new LinkedList<>();
+        for (Game g : currentGamesList.values()) {
+            lst.add(new GameInfo(g));
+        }
+        return lst;
+    }
+
+
+    public List<GameInfo> getGameListFor(Long userID) {
+        List<GameInfo> lst = new LinkedList<>();
+        for (Game g : currentGamesList.values()) {
+            //TODO remplacer l'ID par le player
+            /*if (g.hasPlayer(userID))
+                lst.add(new GameInfo(g));*/
+        }
+        return lst;
+    }
+
     public void sendMessageToAll(Message m) {
         String jsonstr = Utils.gson.toJson(m);
         for (SafeSocket s : sockets)
@@ -173,7 +145,7 @@ public class Server extends Side {
         s.sendMessage(jsonstr);
     }
 
-    public void sendMessageToGame(int gameID, Message m) {
+    public void sendMessageToGame(Long gameID, Message m) {
         List<SafeSocket> ls = gameSubscribers.get(gameID);
         if (ls == null)
             return;
@@ -266,16 +238,16 @@ public class Server extends Side {
 
     @Override
     void HandleNewGame(NewGame m, SafeSocket sender) {
-        int gID = id++;
+        Long gID = id++;
 
-        Game g = new Game(m.getName(), m.isLock(), m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme());
+        Game g = new Game(m.getName(), m.isLock(), m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme(), false);
         //TODO à remplacer par le player
         //g.addPlayer(m.getPlayerID());
         currentGamesList.put(gID, g);
         subscribeToGame(sender, gID);
     }
 
-    private void subscribeToGame(SafeSocket s, int gameID) {
+    private void subscribeToGame(SafeSocket s, Long gameID) {
         if (!gameSubscribers.containsKey(gameID)) {
             List<SafeSocket> ls = new LinkedList<SafeSocket>();
             ls.add(s);
@@ -299,7 +271,7 @@ public class Server extends Side {
 
     @Override
     void HandleVote(Vote m, SafeSocket sender) {
-    	gameList.get(m.getGameID()).voteFor(m.getElectedPlayer());
+        currentGamesList.get(m.getGameID()).voteFor(m.getElectedPlayer());
     }
 
 }

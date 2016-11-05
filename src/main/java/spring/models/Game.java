@@ -3,8 +3,6 @@ package spring.models;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import fr.insa.ot3.model.Drawing;
-
 import javax.persistence.*;
 
 import java.util.*;
@@ -24,7 +22,7 @@ public class Game {
     private int maxNbPlayer;
     private Date startDate;
     private Date endDate;
-
+    private boolean over;
     private String theme;
 
     @ManyToMany
@@ -36,7 +34,15 @@ public class Game {
     @Transient
     private HashMap<Long, Integer> votes;
 
-    /*private Map<String, Drawing> traces;*/
+    @Transient
+    private Map<Long, Drawing> traces;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "game")
+    private List<Trace> bdTraces;
+
+    /*
+    *                       CONSTRUCTEUR
+     */
 
     public Game() {
         players = new HashSet<>();
@@ -48,9 +54,10 @@ public class Game {
         this.id = id;
     }
 
-    public Game(String name, Boolean lock, int maxNbPlayer, int hours, int minutes, String theme) {
+    public Game(String name, Boolean lock, int maxNbPlayer, int hours, int minutes, String theme, Boolean over) {
         this.name = name;
         this.locked = lock;
+        this.over = over;
         this.maxNbPlayer = maxNbPlayer;
         this.theme = theme;
 
@@ -62,10 +69,16 @@ public class Game {
         c.add(Calendar.HOUR, hours);
         c.add(Calendar.MINUTE, minutes);
 
-        this.id = id;
-
         players = new HashSet<>();
         /*traces = new HashMap<>();*/
+    }
+
+    public List<Trace> getBdTraces() {
+        return bdTraces;
+    }
+
+    public void addTrace(Trace trace) {
+        this.bdTraces.add(trace);
     }
 
     public Long getId() {
@@ -137,15 +150,15 @@ public class Game {
         return theme;
     }
 
-    public Drawing getTrace(String playerID) {
-        /*if (traces.containsKey(playerID))
+    public Drawing getTrace(Long playerID) {
+        if (traces.containsKey(playerID))
             return traces.get(playerID);
-*/
+
         return null;
     }
 
-    public void updateTrace(String playerID, Drawing newTrace) {
-        //traces.put(playerID, newTrace);
+    public void updateTrace(Long playerID, Drawing newTrace) {
+        traces.put(playerID, newTrace);
     }
 
     public void setName(String name) {
@@ -180,12 +193,19 @@ public class Game {
         this.players = players;
     }
 
-    public Map<String, Drawing> getTraces() {
-        //return traces;
-        return null;
+    public Map<Long, Drawing> getTraces() {
+        return traces;
     }
 
-    public void setTraces(Map<String, Drawing> traces) {
-        //this.traces = traces;
+    public void setTraces(Map<Long, Drawing> traces) {
+        this.traces = traces;
+    }
+
+    public boolean isOver() {
+        return over;
+    }
+
+    public void setOver(boolean over) {
+        this.over = over;
     }
 }

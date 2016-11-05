@@ -22,5 +22,7 @@ public class LatLng {
         return lng;
     }
 
-
+    public String toJson() {
+        return "{lat:" + lat + ", lng:" + lng + "}";
+    }
 }

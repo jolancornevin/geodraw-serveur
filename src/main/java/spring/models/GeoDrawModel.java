@@ -41,7 +41,7 @@ public class GeoDrawModel {
         trace.addSegment(segment2);
 
         Client c = new Client("localhost", 8080);
-        c.sendMessage(new AddLatLng("dfh", 1, new LatLng(0.234534, 0.234523), true));
+        c.sendMessage(new AddLatLng(1L, 20L, new LatLng(0.234534, 0.234523), true));
 
 //        Gson gson = new Gson();
 //        String jsonString = gson.toJson(trace);

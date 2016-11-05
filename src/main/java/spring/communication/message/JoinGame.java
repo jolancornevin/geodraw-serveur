@@ -1,12 +1,12 @@
 package spring.communication.message;
 
 public class JoinGame extends Message {
-    private final String playerID;
-    private final int gameID;
+    private final Long playerID;
+    private final Long gameID;
     private final boolean observer;
 
 
-    public JoinGame(String playerID, int gameID, boolean observer) {
+    public JoinGame(Long playerID, Long gameID, boolean observer) {
         super(Type.JOINGAME);
 
         this.playerID = playerID;
@@ -14,7 +14,7 @@ public class JoinGame extends Message {
         this.observer = observer;
     }
 
-    public JoinGame(String playerID, int gameID) {
+    public JoinGame(Long playerID, Long gameID) {
         super(Type.JOINGAME);
 
         this.playerID = playerID;
@@ -22,12 +22,12 @@ public class JoinGame extends Message {
         this.observer = false;
     }
 
-    public String getPlayerID() {
+    public Long getPlayerID() {
         return playerID;
     }
 
 
-    public int getGameID() {
+    public Long getGameID() {
         return gameID;
     }
 

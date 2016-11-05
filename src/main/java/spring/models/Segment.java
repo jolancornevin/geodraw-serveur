@@ -24,4 +24,11 @@ public class Segment {
         segment.add(latLng);
     }
 
+    public String toJson() {
+        String str = "[";
+        for(LatLng latlng : this.segment){
+            str += latlng.toJson();
+        }
+        return str + "]";
+    }
 }

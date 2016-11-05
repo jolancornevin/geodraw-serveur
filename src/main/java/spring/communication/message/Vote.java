@@ -2,11 +2,11 @@ package spring.communication.message;
 
 public class Vote extends Message {
 
-    private final int gameID;
+    private final Long gameID;
     private final long voter;
     private final long electedPlayer;
 
-    public Vote(int gameID, long voter, long electedPlayer) {
+    public Vote(Long gameID, long voter, long electedPlayer) {
         super(Type.VOTE);
 
         this.gameID = gameID;
@@ -14,7 +14,7 @@ public class Vote extends Message {
         this.electedPlayer = electedPlayer;
     }
 
-    public int getGameID() {
+    public Long getGameID() {
         return gameID;
     }
 

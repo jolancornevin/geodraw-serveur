@@ -3,17 +3,14 @@ package spring.controllers;
 import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import spring.daos.GameDao;
 import spring.daos.PlayerDao;
 import spring.models.Game;
 import spring.models.Player;
-import spring.utils.HttpResponseKo;
+import spring.models.Trace;
 import spring.utils.HttpResponseOk;
 
 import java.util.List;
@@ -23,7 +20,7 @@ import java.util.Map;
  * Created by Djowood on 25/10/2016.
  */
 @Controller
-public class GameController extends GeneriqueController{
+public class GameController extends GeneriqueController {
 
     // Private fields
 
@@ -94,6 +91,17 @@ public class GameController extends GeneriqueController{
         return new HttpResponseOk<>(game);
     }
 
+    /**
+     * GET /getAll  --> Get a get by ID.
+     */
+    @GetMapping(path = "/game/getAll", produces = "application/json")
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
+    public HttpResponseOk<List<Game>> _getAll() throws BadHttpRequest {
+        List<Game> games = getAll();
+
+        return new HttpResponseOk<>(games);
+    }
 
     @PostMapping(path = "/game/joinGame", produces = "application/json", consumes = "application/json")
     @ResponseBody
@@ -116,7 +124,8 @@ public class GameController extends GeneriqueController{
         if ((player = playerDao.findOne(idPlayer)) == null) throw new BadHttpRequest();
 
         //The game is complete
-        if ((game.getCurrentNbPlayer() + 1) > game.getMaxNbPlayer()) throw new DataIntegrityViolationException("The game is complete");
+        if ((game.getCurrentNbPlayer() + 1) > game.getMaxNbPlayer())
+            throw new DataIntegrityViolationException("The game is complete");
 
         game.addPlayer(player);
 
@@ -146,11 +155,30 @@ public class GameController extends GeneriqueController{
         if ((player = playerDao.findOne(idPlayer)) == null) throw new BadHttpRequest();
 
         //The game is complete
-        if (!game.hasPlayer(player)) throw new DataIntegrityViolationException("The player does not belong to the game");
+        if (!game.hasPlayer(player))
+            throw new DataIntegrityViolationException("The player does not belong to the game");
 
         game.removePlayer(player);
         game = gameDao.save(game);
 
         return new HttpResponseOk<>(game);
+    }
+
+    public List<Game> getAll() {
+        return (List) gameDao.findAll();
+    }
+
+    public List<Game> getAllWithPlayers() {
+        return (List) gameDao.findAllWithPlayer();
+    }
+
+    public void addTrace(Game game, Trace trace) {
+        game.addTrace(trace);
+        gameDao.save(game);
+    }
+
+    public Game getTraces(Game game) {
+        game.getTraces();
+        return game;
     }
 }

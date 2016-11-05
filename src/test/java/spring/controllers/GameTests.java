@@ -91,7 +91,7 @@ public class GameTests {
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
 
-        this.game = gameDao.save(new Game("testInsert", false, 20, 5, 5, "avion"));
+        this.game = gameDao.save(new Game("testInsert", false, 20, 5, 5, "avion", false));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class GameTests {
                 (
                         post("/game/create")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(json(new Game("testInsert", false, 20, 5, 5, "avion")))
+                                .content(json(new Game("testInsert", false, 20, 5, 5, "avion", false)))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value(true))
@@ -120,7 +120,7 @@ public class GameTests {
                 (
                         post("/game/create")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(json(new Game("testInsert", false, 20, 5, 5, "avion")))
+                                .content(json(new Game("testInsert", false, 20, 5, 5, "avion", false)))
                 )
                 .andExpect(status().isCreated());
 
@@ -168,7 +168,7 @@ public class GameTests {
     @Test
     public void shouldNotJoinFullGame() throws Exception {
         //todo recuperer l'id du game une fois créé
-        Game game = new Game("testInsert", false, 0, 5, 5, "avion");
+        Game game = new Game("testInsert", false, 0, 5, 5, "avion", false);
         mockMvc.perform
                 (
                         post("/game/create")
