@@ -159,13 +159,17 @@ public class GameController extends GeneriqueController {
         //Bad request because the id doesn't exist
         if ((player = playerDao.findOne(idPlayer)) == null) throw new BadHttpRequest();
 
-        //The game is complete
-        if ((game.getCurrentNbPlayer() + 1) > game.getMaxNbPlayer())
-            throw new DataIntegrityViolationException("The game is complete");
+        if (game.hasPlayer(player))
+            return game;
+        else {
+            //The game is complete
+            if ((game.getCurrentNbPlayer() + 1) > game.getMaxNbPlayer())
+                throw new DataIntegrityViolationException("The game is complete");
 
-        game.addPlayer(player);
+            game.addPlayer(player);
 
-        return gameDao.save(game);
+            return gameDao.save(game);
+        }
     }
 
     @PostMapping(path = "/game/leaveGame", produces = "application/json", consumes = "application/json")
@@ -218,5 +222,12 @@ public class GameController extends GeneriqueController {
 
     public List<Game> getByIdWithPlayers(Long id) {
         return (List) gameDao.findByIdWithPlayer(id);
+    }
+
+    public Game save(Game game) {
+        //Set traces to be save
+        game.setBdTraces();
+
+        return gameDao.save(game);
     }
 }

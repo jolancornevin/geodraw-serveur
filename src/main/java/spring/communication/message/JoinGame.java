@@ -5,7 +5,6 @@ public class JoinGame extends Message {
     private final Long gameID;
     private final boolean observer;
 
-
     public JoinGame(Long playerID, Long gameID, boolean observer) {
         super(Type.JOINGAME);
 
@@ -26,14 +25,11 @@ public class JoinGame extends Message {
         return playerID;
     }
 
-
     public Long getGameID() {
         return gameID;
     }
 
-
     public boolean isObserver() {
         return observer;
     }
-
 }

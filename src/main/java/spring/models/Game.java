@@ -30,19 +30,18 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "id_player", referencedColumnName = "ID"))
     private Set<Player> players;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "game")
+    private List<Trace> bdTraces;
+
     @Transient
     private HashMap<Long, Integer> votes;
 
     @Transient
     private Map<Long, Drawing> traces;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "game")
-    private List<Trace> bdTraces;
-
-    /*
-    *                       CONSTRUCTEUR
-     */
-
+    /* =================================================================================================================
+                                                        Constructeur
+    ================================================================================================================= */
     public Game() {
         players = new HashSet<>();
         votes = new HashMap<Long, Integer>();
@@ -109,13 +108,16 @@ public class Game {
      * @return true if the player has been successfully added, false otherwise
      */
     public boolean addPlayer(Player player) {
-
         if (players.size() < maxNbPlayer) {
             if (players.contains(player))
                 return true;
+
             players.add(player);
+
             votes.put(player.getId(), 0);
-            //traces.put(playerID, new Drawing());
+
+            traces.put(player.getId(), new Drawing());
+
             return true;
         }
         return false;
@@ -204,8 +206,24 @@ public class Game {
         return traces;
     }
 
-    public void setTraces(Map<Long, Drawing> traces) {
-        this.traces = traces;
+    public Player getPlayer(Long idPlayer) {
+        for (Player player : players) {
+            if (player.getId().equals(idPlayer))
+                return player;
+        }
+        return null;
+    }
+
+    /**
+     * Met à jours l'attribut bdTraces pour le sauvegarder dans la base de données
+     */
+    public void setBdTraces() {
+        bdTraces.clear();
+        for (Map.Entry<Long, Drawing> trace : traces.entrySet()) {
+            Trace tr = new Trace(this, (getPlayer(trace.getKey())));
+            tr.setTrace(trace.getValue().toJson());
+            bdTraces.add(tr);
+        }
     }
 
     public boolean isOver() {

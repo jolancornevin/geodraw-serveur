@@ -26,6 +26,11 @@ public class Trace {
 
     private String trace;
 
+    public Trace(Game game, Player player) {
+        this.game = game;
+        this.player = player;
+    }
+
     public Trace(Long id) {
         this.id = id;
     }
@@ -36,5 +41,9 @@ public class Trace {
 
     public Game getGame() {
         return game;
+    }
+
+    public void setTrace(String json){
+        this.trace = json;
     }
 }

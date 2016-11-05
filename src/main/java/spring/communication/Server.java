@@ -58,7 +58,6 @@ public class Server extends Side {
     ================================================================================================================= */
 
     public void start() {
-        //TODO : load live elements from database
         for (Game game : Connexion.getInstance().getGameController().getAllWithPlayers()) {
             currentGamesList.put(game.getId(), game);
         }
@@ -91,7 +90,8 @@ public class Server extends Side {
                             finishedGames.add(g);
                             currentGamesList.remove(g.getId());
 
-                            Connexion.getInstance().getGameDao().save(g);
+                            //Save it to the database
+                            Connexion.getInstance().getGameController().save(g);
                         }
                     }
 
@@ -139,27 +139,6 @@ public class Server extends Side {
     }
 
     /**
-     * Get the traces of a game
-     * //TODO move to REST API
-     *
-     * @param m
-     * @param sender
-     */
-    @Override
-    void HandleTraceMessage(TraceMessage m, SafeSocket sender) {
-
-
-        this.sendMessageToGame(m.getGameID(), m);
-
-        if (currentGamesList.containsKey(m.getGameID()))
-            currentGamesList.get(m.getGameID())
-                    .updateTrace(m.getPlayerID(), m.getTrace());
-        else {
-            //TODO do something or return error
-        }
-    }
-
-    /**
      * Get the list of game in progress. Those games can be specific for a player or not (depending on the request)
      * //TODO move to REST API
      *
@@ -193,8 +172,45 @@ public class Server extends Side {
             sendMessageTo(sender, new JoinedGame(true));
         } else {
             boolean joined = joinGameInBd(m.getGameID(), m.getPlayerID());
-
             sendMessageTo(sender, new JoinedGame(joined));
+
+            if (joined) {
+                /*
+                Segment segment1 = new Segment();
+                segment1.addLatLng(new LatLng(10, 10));
+                segment1.addLatLng(new LatLng(10, 11));
+                segment1.addLatLng(new LatLng(12, 14));
+                segment1.addLatLng(new LatLng(15, 2));
+
+                Segment segment2 = new Segment();
+                segment2.addLatLng(new LatLng(24, 13));
+                segment2.addLatLng(new LatLng(24, 15));
+                segment2.addLatLng(new LatLng(26, 8));
+                segment2.addLatLng(new LatLng(28, 4));
+
+                Segment segment3 = new Segment();
+                segment3.addLatLng(new LatLng(32, 12));
+                segment3.addLatLng(new LatLng(32, 13));
+                segment3.addLatLng(new LatLng(34, 16));
+                segment3.addLatLng(new LatLng(32, 4));
+
+                Segment segment4 = new Segment();
+                segment4.addLatLng(new LatLng(46, 15));
+                segment4.addLatLng(new LatLng(46, 17));
+                segment4.addLatLng(new LatLng(48, 10));
+                segment4.addLatLng(new LatLng(40, 6));
+
+                Drawing g = new Drawing();
+                g.addSegment(segment1);
+                g.addSegment(segment2);
+
+                Drawing h = new Drawing();
+                h.addSegment(segment3);
+                h.addSegment(segment4);
+
+                sendMessageTo(sender, new TraceMessage(g, m.getGameID(), "adrn"));
+                sendMessageTo(sender, new TraceMessage(h, m.getGameID(), "adrn"));*/
+            }
         }
     }
 
@@ -228,20 +244,40 @@ public class Server extends Side {
 
     /**
      * Ajout d'un latlng dans le game en cours par le client.
-     * PAS DE SAVE DANS LA BD
      *
      * @param m
      * @param sender
      */
     @Override
     void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
+        //TODO gestion de isDrawing or not
+        //TODO gestion player is in game and both exist
+
+        //Broadcast the message to all players
         sendMessageToGame(m.getGameID(), m);
-        currentGamesList.get(m.getGameID()).getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
+
+        Game game = currentGamesList.get(m.getGameID());
+
+        //Add the latlng to the java objet
+        game.getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
+
+        //Save it to the database
+        Connexion.getInstance().getGameController().save(game);
+    }
+
+    @Override
+    void HandleVote(Vote m, SafeSocket sender) {
+        currentGamesList.get(m.getGameID()).voteFor(m.getElectedPlayer());
     }
 
     /* =================================================================================================================
                                                   Socket CLIENT functions
     ================================================================================================================= */
+    @Override
+    void HandleTraceMessage(TraceMessage m, SafeSocket sender) {
+
+    }
+
     @Override
     void HandleGameList(GameList m, SafeSocket sender) {
         return;
@@ -255,11 +291,6 @@ public class Server extends Side {
     @Override
     void HandleGameUpdate(GameUpdate m, SafeSocket sender) {
         // Auto-generated method stub
-    }
-
-    @Override
-    void HandleVote(Vote m, SafeSocket sender) {
-        currentGamesList.get(m.getGameID()).voteFor(m.getElectedPlayer());
     }
 
     /* =================================================================================================================
@@ -326,15 +357,13 @@ public class Server extends Side {
     }
 
     private boolean joinGameInBd(Long gameId, Long playerId) {
-        boolean joined;
         try {
             Connexion.getInstance().getGameController().joinGame(gameId, playerId);
-            joined = true;
+            return true;
         } catch (BadHttpRequest badHttpRequest) {
             badHttpRequest.printStackTrace();
-            joined = false;
         }
-        return joined;
+        return false;
     }
 
     private void subscribeToGame(SafeSocket s, Long gameID) {
