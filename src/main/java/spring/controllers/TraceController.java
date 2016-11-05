@@ -2,25 +2,19 @@ package spring.controllers;
 
 import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import spring.daos.PlayerDao;
 import spring.daos.TraceDao;
-import spring.models.Game;
-import spring.models.Player;
 import spring.models.Trace;
 import spring.utils.HttpResponseOk;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Djowood on 25/10/2016.
  */
 @Controller
-public class TraceController extends GeneriqueController{
+public class TraceController extends GeneriqueController {
 
     // Private fields
 

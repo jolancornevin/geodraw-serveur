@@ -7,5 +7,7 @@ public class HttpResponseKo {
     public final String errorMessage;
     public final boolean status = false;
 
-    public HttpResponseKo(String msg) { errorMessage = msg; }
+    public HttpResponseKo(String msg) {
+        errorMessage = msg;
+    }
 }

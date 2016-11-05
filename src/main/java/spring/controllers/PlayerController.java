@@ -6,11 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import spring.daos.PlayerDao;
-import spring.models.Game;
 import spring.models.Player;
 import spring.utils.HttpResponseOk;
-
-import java.util.List;
 
 /**
  * Created by Djowood on 25/10/2016.

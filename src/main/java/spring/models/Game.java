@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-
 import java.util.*;
 
 /**
@@ -30,7 +29,7 @@ public class Game {
             joinColumns = @JoinColumn(name = "id_game", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "id_player", referencedColumnName = "ID"))
     private Set<Player> players;
-    
+
     @Transient
     private HashMap<Long, Integer> votes;
 
@@ -98,11 +97,11 @@ public class Game {
     }
 
     public void voteFor(long playerID) {
-    	if(votes.containsKey(playerID)) {
-    		votes.put(playerID, votes.get(playerID) + 1);
-    	}
+        if (votes.containsKey(playerID)) {
+            votes.put(playerID, votes.get(playerID) + 1);
+        }
     }
-    
+
     /**
      * Adds a player to the current game
      *
@@ -110,7 +109,7 @@ public class Game {
      * @return true if the player has been successfully added, false otherwise
      */
     public boolean addPlayer(Player player) {
-        
+
         if (players.size() < maxNbPlayer) {
             if (players.contains(player))
                 return true;

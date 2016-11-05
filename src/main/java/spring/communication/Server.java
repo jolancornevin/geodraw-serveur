@@ -15,6 +15,9 @@ import java.util.*;
 
 public class Server extends Side {
 
+    /* =================================================================================================================
+                                                        Variables
+    ================================================================================================================= */
     private transient List<SafeSocket> sockets;
     private transient ServerSocket servSock;
 
@@ -28,6 +31,9 @@ public class Server extends Side {
     private transient boolean interrupted = false;
     private Long id = 0L;
 
+    /* =================================================================================================================
+                                                        Constructeur
+    ================================================================================================================= */
 
     public Server() {
         super();
@@ -45,6 +51,11 @@ public class Server extends Side {
             e.printStackTrace();
         }
     }
+
+
+    /* =================================================================================================================
+                                                  Init serveur function
+    ================================================================================================================= */
 
     public void start() {
         //TODO : load live elements from database
@@ -115,65 +126,9 @@ public class Server extends Side {
         System.err.println("Server stopped");
     }
 
-    /**
-     * Récupère la liste complète des games
-     *
-     * @return
-     */
-    public List<GameInfo> getCurrentGamesList() {
-        List<GameInfo> lst = new LinkedList<>();
-        for (Game g : currentGamesList.values()) {
-            lst.add(new GameInfo(g));
-        }
-        return lst;
-    }
-
-    /**
-     * Récupère la liste complète des games pour un joueur donnée
-     *
-     * @return
-     */
-    public List<GameInfo> getGameListFor(Long userID) {
-        List<GameInfo> lst = new LinkedList<>();
-
-        //TODO à remplacer par une requête sur la bd, pour éviter de tous parcourir
-        for (Game g : currentGamesList.values()) {
-            if (g.hasPlayer(userID))
-                lst.add(new GameInfo(g));
-        }
-        return lst;
-    }
-
-    public void sendMessageToAll(Message m) {
-        String jsonstr = Utils.gson.toJson(m);
-        for (SafeSocket s : sockets)
-            s.sendMessage(jsonstr);
-    }
-
-    public void sendMessageTo(SafeSocket s, Message m) {
-        String jsonstr = Utils.gson.toJson(m);
-        s.sendMessage(jsonstr);
-    }
-
-    public void sendMessageToGame(Long gameID, Message m) {
-        List<SafeSocket> ls = gameSubscribers.get(gameID);
-        if (ls == null)
-            return;
-
-        List<SafeSocket> dead = new LinkedList<SafeSocket>();
-
-        for (SafeSocket s : ls) {
-            if (s.isSocketAlive())
-                sendMessageTo(s, m);
-            else
-                dead.add(s);
-        }
-
-        for (SafeSocket s : dead)
-            ls.remove(s);
-
-    }
-
+    /* =================================================================================================================
+                                                  Socket functions
+    ================================================================================================================= */
     class ServerBreak implements BreakdownObserver {
         @Override
         public void notifyBreakdownObserver(SafeSocket sock, boolean intended) {
@@ -181,27 +136,32 @@ public class Server extends Side {
             for (List<SafeSocket> l : gameSubscribers.values())
                 l.remove(sock);
         }
-
     }
 
+    /**
+     * Get the traces of a game
+     * //TODO move to REST API
+     *
+     * @param m
+     * @param sender
+     */
     @Override
     void HandleTraceMessage(TraceMessage m, SafeSocket sender) {
+
+
         this.sendMessageToGame(m.getGameID(), m);
 
         if (currentGamesList.containsKey(m.getGameID()))
-            currentGamesList.get(m.getGameID()).updateTrace(m.getPlayerID(), m.getTrace());
+            currentGamesList.get(m.getGameID())
+                    .updateTrace(m.getPlayerID(), m.getTrace());
+        else {
+            //TODO do something or return error
+        }
     }
 
     /**
-     * Client method
-     */
-    @Override
-    void HandleGameList(GameList m, SafeSocket sender) {
-        return;
-    }
-
-    /**
-     * SOCKET : Récupére la liste des games
+     * Get the list of game in progress. Those games can be specific for a player or not (depending on the request)
+     * //TODO move to REST API
      *
      * @param m
      * @param sender
@@ -214,6 +174,13 @@ public class Server extends Side {
             sendMessageTo(sender, new GameList(getCurrentGamesList(), false));
     }
 
+    /**
+     * Put the gamer inside a game
+     * //TODO move to REST API
+     *
+     * @param m
+     * @param sender
+     */
     @Override
     void HandleJoinGame(JoinGame m, SafeSocket sender) {
         if (!currentGamesList.containsKey(m.getGameID()))
@@ -231,26 +198,13 @@ public class Server extends Side {
         }
     }
 
-    private boolean joinGameInBd(Long gameId, Long playerId) {
-        boolean joined;
-        try {
-            Connexion.getInstance().getGameController().joinGame(gameId, playerId);
-            joined = true;
-        } catch (BadHttpRequest badHttpRequest) {
-            badHttpRequest.printStackTrace();
-            joined = false;
-        }
-        return joined;
-    }
-
     /**
-     * Client method
+     * Create new game in the database and put the creator inside
+     * //TODO move to REST API
+     *
+     * @param m
+     * @param sender
      */
-    @Override
-    void HandleJoinedGame(JoinedGame m, SafeSocket sender) {
-        return;
-    }
-
     @Override
     void HandleNewGame(NewGame m, SafeSocket sender) {
         Game g = new Game(m.getName(), m.isLock(), m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme(), false);
@@ -272,21 +226,30 @@ public class Server extends Side {
         }
     }
 
-    private void subscribeToGame(SafeSocket s, Long gameID) {
-        if (!gameSubscribers.containsKey(gameID)) {
-            List<SafeSocket> ls = new LinkedList<SafeSocket>();
-            ls.add(s);
-            gameSubscribers.put(gameID, ls);
-        } else {
-            gameSubscribers.get(gameID).add(s);
-        }
+    /**
+     * Ajout d'un latlng dans le game en cours par le client.
+     * PAS DE SAVE DANS LA BD
+     *
+     * @param m
+     * @param sender
+     */
+    @Override
+    void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
+        sendMessageToGame(m.getGameID(), m);
+        currentGamesList.get(m.getGameID()).getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
+    }
+
+    /* =================================================================================================================
+                                                  Socket CLIENT functions
+    ================================================================================================================= */
+    @Override
+    void HandleGameList(GameList m, SafeSocket sender) {
+        return;
     }
 
     @Override
-    void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
-        System.out.println(Utils.gson.toJson(m));
-        sendMessageToGame(m.getGameID(), m);
-        currentGamesList.get(m.getGameID()).getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
+    void HandleJoinedGame(JoinedGame m, SafeSocket sender) {
+        return;
     }
 
     @Override
@@ -297,6 +260,91 @@ public class Server extends Side {
     @Override
     void HandleVote(Vote m, SafeSocket sender) {
         currentGamesList.get(m.getGameID()).voteFor(m.getElectedPlayer());
+    }
+
+    /* =================================================================================================================
+                                                  Functions
+    ================================================================================================================= */
+
+    /**
+     * Récupère la liste complète des games
+     *
+     * @return
+     */
+    private List<GameInfo> getCurrentGamesList() {
+        List<GameInfo> lst = new LinkedList<>();
+        for (Game g : currentGamesList.values()) {
+            lst.add(new GameInfo(g));
+        }
+        return lst;
+    }
+
+    /**
+     * Récupère la liste complète des games pour un joueur donnée
+     *
+     * @return
+     */
+    private List<GameInfo> getGameListFor(Long userID) {
+        List<GameInfo> lst = new LinkedList<>();
+
+        //TODO à remplacer par une requête sur la bd, pour éviter de tous parcourir
+        for (Game g : currentGamesList.values()) {
+            if (g.hasPlayer(userID))
+                lst.add(new GameInfo(g));
+        }
+        return lst;
+    }
+
+    private void sendMessageToAll(Message m) {
+        String jsonstr = Utils.gson.toJson(m);
+        for (SafeSocket s : sockets)
+            s.sendMessage(jsonstr);
+    }
+
+    private void sendMessageTo(SafeSocket s, Message m) {
+        String jsonstr = Utils.gson.toJson(m);
+        s.sendMessage(jsonstr);
+    }
+
+    private void sendMessageToGame(Long gameID, Message m) {
+        List<SafeSocket> ls = gameSubscribers.get(gameID);
+        if (ls == null)
+            return;
+
+        List<SafeSocket> dead = new LinkedList<SafeSocket>();
+
+        for (SafeSocket s : ls) {
+            if (s.isSocketAlive())
+                sendMessageTo(s, m);
+            else
+                dead.add(s);
+        }
+
+        for (SafeSocket s : dead)
+            ls.remove(s);
+
+    }
+
+    private boolean joinGameInBd(Long gameId, Long playerId) {
+        boolean joined;
+        try {
+            Connexion.getInstance().getGameController().joinGame(gameId, playerId);
+            joined = true;
+        } catch (BadHttpRequest badHttpRequest) {
+            badHttpRequest.printStackTrace();
+            joined = false;
+        }
+        return joined;
+    }
+
+    private void subscribeToGame(SafeSocket s, Long gameID) {
+        if (!gameSubscribers.containsKey(gameID)) {
+            List<SafeSocket> ls = new LinkedList<SafeSocket>();
+            ls.add(s);
+            gameSubscribers.put(gameID, ls);
+        } else {
+            gameSubscribers.get(gameID).add(s);
+        }
     }
 
 }

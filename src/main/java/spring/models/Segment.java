@@ -26,7 +26,7 @@ public class Segment {
 
     public String toJson() {
         String str = "[";
-        for(LatLng latlng : this.segment){
+        for (LatLng latlng : this.segment) {
             str += latlng.toJson();
         }
         return str + "]";

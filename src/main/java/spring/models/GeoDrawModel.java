@@ -8,7 +8,6 @@ package spring.models;
 import spring.communication.Client;
 import spring.communication.Server;
 import spring.communication.message.AddLatLng;
-import spring.communication.message.NewGame;
 import spring.utils.Utils;
 
 import java.util.Calendar;
