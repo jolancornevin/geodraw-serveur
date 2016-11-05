@@ -1,15 +1,15 @@
-package fr.insa.ot3.communication.message;
+package spring.communication.message;
 
-import fr.insa.ot3.model.LatLng;
+import spring.models.LatLng;
 
 public class AddLatLng extends Message {
 
-    private final String userID;
-    private final int gameID;
+    private final Long userID;
+    private final Long gameID;
     private final boolean drawing;
     private LatLng latLng;
 
-    public AddLatLng(String userID, int gameID, LatLng latLng, boolean drawing) {
+    public AddLatLng(Long userID, Long gameID, LatLng latLng, boolean drawing) {
         super(Type.ADDLATLNG);
 
         this.userID = userID;
@@ -26,11 +26,11 @@ public class AddLatLng extends Message {
         this.latLng = latLng;
     }
 
-    public String getUserID() {
+    public Long getUserID() {
         return userID;
     }
 
-    public int getGameID() {
+    public Long getGameID() {
         return gameID;
     }
 

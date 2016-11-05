@@ -1,4 +1,4 @@
-package fr.insa.ot3.utils;
+package spring.utils;
 
 import com.google.gson.Gson;
 

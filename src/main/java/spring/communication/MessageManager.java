@@ -1,8 +1,8 @@
-package fr.insa.ot3.communication;
+package spring.communication;
 
 import com.m5c.safesockets.MessageObserver;
 import com.m5c.safesockets.SafeSocket;
-import fr.insa.ot3.communication.message.*;
+import spring.communication.message.*;
 
 public class MessageManager implements MessageObserver {
     private Side side;

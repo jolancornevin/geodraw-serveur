@@ -1,9 +1,9 @@
-package fr.insa.ot3.communication;
+package spring.communication;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
-import fr.insa.ot3.communication.message.*;
-import fr.insa.ot3.utils.Utils;
+import spring.communication.message.*;
+import spring.utils.Utils;
 
 import java.io.IOException;
 
@@ -59,13 +59,10 @@ public class Client extends Side {
 
     }
 
-
     @Override
     void HandleGameList(GameList m, SafeSocket sender) {
         // TODO Auto-generated method stub
-
     }
-
 
     /**
      * Server method
@@ -75,7 +72,6 @@ public class Client extends Side {
         return;
     }
 
-
     /**
      * Server method
      */
@@ -84,13 +80,10 @@ public class Client extends Side {
         return;
     }
 
-
     @Override
     void HandleJoinedGame(JoinedGame m, SafeSocket sender) {
         // TODO Auto-generated method stub
-
     }
-
     /**
      * Server method
      */
@@ -99,26 +92,18 @@ public class Client extends Side {
         return;
     }
 
-
     @Override
     void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
         // TODO Auto-generated method stub
-
     }
-
 
     @Override
     void HandleGameUpdate(GameUpdate m, SafeSocket sender) {
         // TODO Auto-generated method stub
-
     }
-
 
     @Override
     void HandleVote(Vote m, SafeSocket sender) {
         // TODO Auto-generated method stub
-
     }
-
-
 }

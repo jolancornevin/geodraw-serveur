@@ -1,34 +1,29 @@
-package fr.insa.ot3.communication.message;
+package spring.communication.message;
 
-import fr.insa.ot3.model.Drawing;
+import spring.models.Drawing;
 
 public class TraceMessage extends Message {
 
     private final Drawing trace;
-    private final int gameID;
-    private final String playerID;
+    private final Long gameID;
+    private final Long playerID;
 
-    public TraceMessage(Drawing trace, int gameID, String playerID) {
+    public TraceMessage(Drawing trace, Long gameID, Long playerID) {
         super(Type.TRACE);
         this.trace = trace;
         this.gameID = gameID;
         this.playerID = playerID;
     }
 
-
     public Drawing getTrace() {
         return trace;
     }
 
-
-    public int getGameID() {
+    public Long getGameID() {
         return gameID;
     }
 
-
-    public String getPlayerID() {
+    public Long getPlayerID() {
         return playerID;
     }
-
-
 }

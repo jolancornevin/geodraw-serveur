@@ -1,6 +1,6 @@
-package fr.insa.ot3.communication.message;
+package spring.communication.message;
 
-import fr.insa.ot3.model.GameInfo;
+import spring.models.GameInfo;
 
 import java.util.List;
 

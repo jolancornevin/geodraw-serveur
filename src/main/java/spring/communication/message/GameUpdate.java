@@ -1,6 +1,6 @@
-package fr.insa.ot3.communication.message;
+package spring.communication.message;
 
-import fr.insa.ot3.model.Game;
+import spring.models.Game;
 
 public class GameUpdate extends Message {
     private final Game updatedGame;

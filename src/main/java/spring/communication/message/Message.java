@@ -1,6 +1,6 @@
-package fr.insa.ot3.communication.message;
+package spring.communication.message;
 
-import fr.insa.ot3.utils.Utils;
+import spring.utils.Utils;
 
 import java.util.HashMap;
 

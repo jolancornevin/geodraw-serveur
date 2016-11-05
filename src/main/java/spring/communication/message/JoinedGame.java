@@ -1,4 +1,4 @@
-package fr.insa.ot3.communication.message;
+package spring.communication.message;
 
 
 public class JoinedGame extends Message {
