@@ -202,6 +202,8 @@ public class Server extends Side {
         @Override
         public void notifyBreakdownObserver(SafeSocket sock, boolean intended) {
             sockets.remove(sock);
+            for(List<SafeSocket> l : gameSubscribers.values())
+            	l.remove(sock);
         }
 
     }
@@ -236,7 +238,6 @@ public class Server extends Side {
             sendMessageTo(sender, new JoinedGame(false));
         Game g = gameList.get(m.getGameID());
 
-        subscribeToGame(sender, m.getGameID());
 
         boolean joined;
         
@@ -253,6 +254,8 @@ public class Server extends Side {
         	sendMessageToGame(m.getGameID(), new AddLatLng(m.getPlayerID(), m.getGameID(), new LatLng(0, 0), false));
         	sendMessageTo(sender, new GameUpdate(g));
         }
+
+        subscribeToGame(sender, m.getGameID());
     }
 
     /**
@@ -271,6 +274,8 @@ public class Server extends Side {
         Game g = new Game(gID, m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme());
         g.addPlayer(m.getPlayerID());
         gameList.put(gID, g);
+
+    	sendMessageTo(sender, new GameUpdate(g));
         subscribeToGame(sender, gID);
     }
 
