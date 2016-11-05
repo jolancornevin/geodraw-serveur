@@ -96,10 +96,10 @@ public class Client extends Side {
 
     public boolean sendMessage(Message m) {
         String jsonstr = Utils.gson.toJson(m);
+        return socket.sendMessage(jsonstr);
 
-        messagePool.offer(jsonstr);
-
-        return true;
+        /*messagePool.offer(jsonstr);
+        return true;*/
     }
 
     private boolean sendMsg(String msg) {

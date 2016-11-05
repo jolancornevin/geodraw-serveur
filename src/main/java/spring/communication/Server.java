@@ -78,7 +78,6 @@ public class Server extends Side {
         //Job tournant toutes les secondes, pour voir si des game on finis.
         gameCleaner = new Thread("Server finished games cleaner") {
             public void run() {
-                int preIndex, postIndex;
                 while (!interrupted) {
                     Date now = new Date();
 
