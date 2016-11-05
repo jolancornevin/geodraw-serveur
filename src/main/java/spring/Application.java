@@ -57,8 +57,8 @@ public class Application {
         }
 
         Client c = new Client("localhost", 8888);
-        c.sendMessage(new NewGame("insertToServer", false, 20, 6, 6, "elephant", 2L));
-        c.sendMessage(new JoinGame(2L, 20L));
+        //c.sendMessage(new NewGame("insertToServer", false, 20, 6, 6, "elephant", 2L));
+        //c.sendMessage(new JoinGame(2L, 20L));
 
         c.disconnect();
     }

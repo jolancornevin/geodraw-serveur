@@ -7,12 +7,11 @@ public class GameListRequest extends Message {
 
     public GameListRequest() {
         super(Type.GAMELISTREQUEST);
-        userID = 0L;
+        userID = -1L;
         self = false;
     }
 
-
-    public GameListRequest(long userID) {
+    public GameListRequest(Long userID) {
         super(Type.GAMELISTREQUEST);
         this.userID = userID;
         self = true;

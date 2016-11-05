@@ -14,6 +14,7 @@ import java.net.ServerSocket;
 import java.util.*;
 
 public class Server extends Side {
+
     private transient List<SafeSocket> sockets;
     private transient ServerSocket servSock;
 
@@ -26,6 +27,7 @@ public class Server extends Side {
 
     private transient boolean interrupted = false;
     private Long id = 0L;
+
 
     public Server() {
         super();
@@ -105,9 +107,7 @@ public class Server extends Side {
             //c.disconnect();
             servSock.close();
             socketCreator.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
         //TODO : save live elements in database
@@ -115,6 +115,11 @@ public class Server extends Side {
         System.err.println("Server stopped");
     }
 
+    /**
+     * Récupère la liste complète des games
+     *
+     * @return
+     */
     public List<GameInfo> getCurrentGamesList() {
         List<GameInfo> lst = new LinkedList<>();
         for (Game g : currentGamesList.values()) {
@@ -123,13 +128,18 @@ public class Server extends Side {
         return lst;
     }
 
-
+    /**
+     * Récupère la liste complète des games pour un joueur donnée
+     *
+     * @return
+     */
     public List<GameInfo> getGameListFor(Long userID) {
         List<GameInfo> lst = new LinkedList<>();
+
+        //TODO à remplacer par une requête sur la bd, pour éviter de tous parcourir
         for (Game g : currentGamesList.values()) {
-            //TODO remplacer l'ID par le player
-            /*if (g.hasPlayer(userID))
-                lst.add(new GameInfo(g));*/
+            if (g.hasPlayer(userID))
+                lst.add(new GameInfo(g));
         }
         return lst;
     }
@@ -190,6 +200,12 @@ public class Server extends Side {
         return;
     }
 
+    /**
+     * SOCKET : Récupére la liste des games
+     *
+     * @param m
+     * @param sender
+     */
     @Override
     void HandleGameListRequest(GameListRequest m, SafeSocket sender) {
         if (m.isSelf())

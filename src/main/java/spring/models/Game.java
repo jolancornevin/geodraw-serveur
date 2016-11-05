@@ -130,6 +130,14 @@ public class Game {
         return players.contains(player);
     }
 
+    public boolean hasPlayer(Long idPlayer) {
+        for (Player player : players) {
+            if (player.getId().equals(idPlayer))
+                return true;
+        }
+        return false;
+    }
+
     public Set<Player> getPlayers() {
         return players;
     }
