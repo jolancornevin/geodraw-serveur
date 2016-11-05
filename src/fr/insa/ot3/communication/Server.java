@@ -2,9 +2,11 @@ package fr.insa.ot3.communication;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
+
 import fr.insa.ot3.communication.message.*;
 import fr.insa.ot3.model.Game;
 import fr.insa.ot3.model.GameInfo;
+import fr.insa.ot3.model.LatLng;
 import fr.insa.ot3.utils.Utils;
 
 import java.io.IOException;
@@ -236,10 +238,21 @@ public class Server extends Side {
 
         subscribeToGame(sender, m.getGameID());
 
-        if (m.isObserver())
-            sendMessageTo(sender, new JoinedGame(true));
-        else
-            sendMessageTo(sender, new JoinedGame(g.addPlayer(m.getPlayerID())));
+        boolean joined;
+        
+        if (m.isObserver()) {
+        	joined = true;
+            sendMessageTo(sender, new JoinedGame(joined));
+        }
+        else {
+        	joined = g.addPlayer(m.getPlayerID());
+            sendMessageTo(sender, new JoinedGame(joined));
+        }
+        
+        if(joined) {
+        	sendMessageToGame(m.getGameID(), new AddLatLng(m.getPlayerID(), m.getGameID(), new LatLng(0, 0), false));
+        	sendMessageTo(sender, new GameUpdate(g));
+        }
     }
 
     /**
@@ -285,7 +298,7 @@ public class Server extends Side {
 
     @Override
     void HandleVote(Vote m, SafeSocket sender) {
-        // TODO Auto-generated method stub
+        gameList.get(m.getGameID()).voteFor(m.getElectedPlayer());
     }
 
 }
