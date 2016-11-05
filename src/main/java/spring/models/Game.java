@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+
 import java.util.*;
 
 /**
@@ -77,6 +78,12 @@ public class Game {
         return this.players.size();
     }
 
+    public void voteFor(String playerID) {
+    	if(players.containsKey(playerID)) {
+    		players.put(playerID, players.get(playerID) + 1);
+    	}
+    }
+    
     /**
      * Adds a player to the current game
      *
