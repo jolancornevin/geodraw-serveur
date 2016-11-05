@@ -165,16 +165,18 @@ public class Server extends Side {
         if (!currentGamesList.containsKey(m.getGameID()))
             sendMessageTo(sender, new JoinedGame(false));
 
-        subscribeToGame(sender, m.getGameID());
-
         if (m.isObserver()) {
             //TODO à remplacer pour que ça fonctionne
             sendMessageTo(sender, new JoinedGame(true));
+
+            subscribeToGame(sender, m.getGameID());
         } else {
             boolean joined = joinGameInBd(m.getGameID(), m.getPlayerID());
             sendMessageTo(sender, new JoinedGame(joined));
 
             if (joined) {
+
+                subscribeToGame(sender, m.getGameID());
                 /*
                 Segment segment1 = new Segment();
                 segment1.addLatLng(new LatLng(10, 10));

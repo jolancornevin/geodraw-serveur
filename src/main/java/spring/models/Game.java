@@ -96,9 +96,10 @@ public class Game {
     }
 
     public void voteFor(long playerID) {
-        if (votes.containsKey(playerID)) {
+        if (hasPlayer(playerID)) {
             votes.put(playerID, votes.get(playerID) + 1);
         }
+
     }
 
     /**
