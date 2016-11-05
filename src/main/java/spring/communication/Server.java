@@ -3,10 +3,10 @@ package spring.communication;
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
 
-import fr.insa.ot3.model.LatLng;
 import spring.communication.message.*;
 import spring.models.Game;
 import spring.models.GameInfo;
+import spring.models.LatLng;
 import spring.utils.Utils;
 
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class Server extends Side {
     }
 
 
-    public List<GameInfo> getGameListFor(String userID) {
+    public List<GameInfo> getGameListFor(Long userID) {
         List<GameInfo> lst = new LinkedList<>();
         for (Game g : gameList.values()) {
             /*if (g.hasPlayer(userID))

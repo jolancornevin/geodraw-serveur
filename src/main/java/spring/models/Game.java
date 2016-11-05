@@ -3,6 +3,8 @@ package spring.models;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import fr.insa.ot3.model.Drawing;
+
 import javax.persistence.*;
 
 import java.util.*;
@@ -30,11 +32,15 @@ public class Game {
             joinColumns = @JoinColumn(name = "id_game", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "id_player", referencedColumnName = "ID"))
     private Set<Player> players;
+    
+    @Transient
+    private HashMap<Long, Integer> votes;
 
     /*private Map<String, Drawing> traces;*/
 
     public Game() {
         players = new HashSet<>();
+        votes = new HashMap<Long, Integer>();
     }
 
     public Game(Long id) {
@@ -78,9 +84,9 @@ public class Game {
         return this.players.size();
     }
 
-    public void voteFor(String playerID) {
-    	if(players.containsKey(playerID)) {
-    		players.put(playerID, players.get(playerID) + 1);
+    public void voteFor(long playerID) {
+    	if(votes.containsKey(playerID)) {
+    		votes.put(playerID, votes.get(playerID) + 1);
     	}
     }
     
@@ -91,9 +97,13 @@ public class Game {
      * @return true if the player has been successfully added, false otherwise
      */
     public boolean addPlayer(Player player) {
-        if (this.players.size() < maxNbPlayer) {
-            this.players.add(player);
-
+        
+        if (players.size() < maxNbPlayer) {
+            if (players.contains(player))
+                return true;
+            players.add(player);
+            votes.put(player.getId(), 0);
+            //traces.put(playerID, new Drawing());
             return true;
         }
         return false;

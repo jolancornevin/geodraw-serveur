@@ -3,10 +3,10 @@ package spring.communication.message;
 public class Vote extends Message {
 
     private final int gameID;
-    private final String voter;
-    private final String electedPlayer;
+    private final long voter;
+    private final long electedPlayer;
 
-    public Vote(int gameID, String voter, String electedPlayer) {
+    public Vote(int gameID, long voter, long electedPlayer) {
         super(Type.VOTE);
 
         this.gameID = gameID;
@@ -18,11 +18,11 @@ public class Vote extends Message {
         return gameID;
     }
 
-    public String getVoter() {
+    public long getVoter() {
         return voter;
     }
 
-    public String getElectedPlayer() {
+    public long getElectedPlayer() {
         return electedPlayer;
     }
 }

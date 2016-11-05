@@ -2,17 +2,17 @@ package spring.communication.message;
 
 public class GameListRequest extends Message {
 
-    private final String userID;
+    private final long userID;
     private final boolean self;
 
     public GameListRequest() {
         super(Type.GAMELISTREQUEST);
-        userID = "";
+        userID = 0;
         self = false;
     }
 
 
-    public GameListRequest(String userID) {
+    public GameListRequest(long userID) {
         super(Type.GAMELISTREQUEST);
         this.userID = userID;
         self = true;
@@ -22,7 +22,7 @@ public class GameListRequest extends Message {
         return self;
     }
 
-    public String getUserID() {
+    public long getUserID() {
         return userID;
     }
 }
