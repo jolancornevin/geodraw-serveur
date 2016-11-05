@@ -8,7 +8,6 @@ import java.util.HashMap;
 public class Message {
     private static HashMap<Integer, Class<? extends Message>> messagesTypes = new HashMap<Integer, Class<? extends Message>>();
 
-
     protected final int id;
 
     public Message(int id) {
@@ -45,6 +44,7 @@ public class Message {
         GAMEUPDATE,
 
         VOTE,
+        NEWUSER,
         GAMERESULT
         //TODO Vote
         //TODO trace update incremental (not full)
@@ -65,5 +65,7 @@ public class Message {
         messagesTypes.put(Type.GAMEUPDATE.ordinal(), GameUpdate.class);
 
         messagesTypes.put(Type.VOTE.ordinal(), Vote.class);
+
+        messagesTypes.put(Type.NEWUSER.ordinal(), NewUser.class);
     }
 }

@@ -26,6 +26,8 @@ public class MessageManager implements MessageObserver {
             side.HandleJoinGame((JoinGame) m, sock);
         else if (m instanceof NewGame)
             side.HandleNewGame((NewGame) m, sock);
+        else if (m instanceof NewUser)
+            side.HandleNewUser((NewUser) m, sock);
         else if (m instanceof AddLatLng)
             side.HandleAddLatLng((AddLatLng) m, sock);
         else if (m instanceof GameUpdate)

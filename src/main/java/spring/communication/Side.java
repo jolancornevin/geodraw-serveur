@@ -40,4 +40,5 @@ public abstract class Side {
 
     abstract void HandleVote(Vote m, SafeSocket sender);
 
+    abstract void HandleNewUser(NewUser m, SafeSocket sock);
 }

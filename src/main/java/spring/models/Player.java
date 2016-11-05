@@ -18,6 +18,7 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String color;
 
     @ManyToMany
     @JoinTable(name = "games_players",
@@ -38,6 +39,11 @@ public class Player {
         games = new HashSet<>();
         this.id = id;
         this.name = name;
+    }
+
+    public Player(String name, String color) {
+        this.name = name;
+        this.color = color;
     }
 
     public Long getId() {
@@ -71,4 +77,9 @@ public class Player {
     public void removeGame(Game game) {
         this.games.remove(game);
     }
+
+    public String getColor() {
+        return color;
+    }
 }
+

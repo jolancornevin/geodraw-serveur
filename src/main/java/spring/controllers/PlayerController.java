@@ -30,13 +30,17 @@ public class PlayerController extends GeneriqueController {
     @PostMapping(path = "/player/create", produces = "application/json", consumes = "application/json")
     @ResponseBody
     @ResponseStatus(value = HttpStatus.CREATED)
-    public HttpResponseOk<Player> create(@RequestBody Player player) throws BadHttpRequest {
+    public HttpResponseOk<Player> _create(@RequestBody Player player) throws BadHttpRequest {
         if (player == null)
             throw new BadHttpRequest();
 
-        player = playerDao.save(player);
+        player = create(player);
 
         return new HttpResponseOk<>(player);
+    }
+
+    public Player create(Player player) {
+        return playerDao.save(player);
     }
 
     /**

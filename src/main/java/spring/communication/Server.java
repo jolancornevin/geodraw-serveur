@@ -7,6 +7,7 @@ import spring.communication.message.*;
 import spring.models.Drawing;
 import spring.models.Game;
 import spring.models.GameInfo;
+import spring.models.Player;
 import spring.utils.Connexion;
 import spring.utils.Utils;
 
@@ -30,7 +31,6 @@ public class Server extends Side {
     private final transient Map<Long, List<SafeSocket>> gameSubscribers;
 
     private transient boolean interrupted = false;
-    private Long id = 0L;
 
     /* =================================================================================================================
                                                         Constructeur
@@ -243,6 +243,16 @@ public class Server extends Side {
         currentGamesList.get(m.getGameID()).voteFor(m.getElectedPlayer());
     }
 
+    @Override
+    void HandleNewUser(NewUser m, SafeSocket sender) {
+        Player p = new Player(m.getName(), m.getColor());
+
+        //Create the game in the database
+        p = Connexion.getInstance().getPlayerController().create(p);
+        // TODO bug ??
+        // sendMessageTo(sender, new NewUser(p.getId(), p.getName(), p.getColor()));
+    }
+
     /* =================================================================================================================
                                                   Socket CLIENT functions
     ================================================================================================================= */
@@ -340,7 +350,7 @@ public class Server extends Side {
 
     private void subscribeToGame(SafeSocket s, Long gameID) {
         if (!gameSubscribers.containsKey(gameID)) {
-            List<SafeSocket> ls = new LinkedList<SafeSocket>();
+            List<SafeSocket> ls = new LinkedList<>();
             ls.add(s);
             gameSubscribers.put(gameID, ls);
         } else {

@@ -9,10 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import spring.communication.Client;
 import spring.communication.Server;
-import spring.communication.message.AddLatLng;
-import spring.communication.message.JoinGame;
-import spring.communication.message.NewGame;
-import spring.communication.message.TraceMessage;
+import spring.communication.message.*;
 import spring.controllers.GameController;
 import spring.controllers.PlayerController;
 import spring.models.LatLng;
@@ -61,9 +58,10 @@ public class Application {
 
         Client c = new Client("localhost", 8888);
         //c.sendMessage(new NewGame("insertToServer", false, 20, 6, 6, "elephant", 2L));
-        c.sendMessage(new JoinGame(3L, 20L));
+        c.sendMessage(new NewUser(-1L, "arda", "red"));
+        /*c.sendMessage(new JoinGame(3L, 20L));
         c.sendMessage(new AddLatLng(3L, 20L, new LatLng(2,2), true));
-        /*c.sendMessage(new AddLatLng(2L, 20L, new LatLng(2,3), true));*/
+        c.sendMessage(new AddLatLng(2L, 20L, new LatLng(2,3), true));*/
 
         c.disconnect();
     }

@@ -210,5 +210,10 @@ public class Client extends Side {
         }
     }
 
+    @Override
+    void HandleNewUser(NewUser m, SafeSocket sock) {
+        //TODO store ID user somewhere
+    }
+
 
 }
