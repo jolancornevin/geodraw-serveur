@@ -132,6 +132,16 @@ public class GameTests {
     }
 
     @Test
+    public void shouldQueryGameWithPlayers() throws Exception {
+        mockMvc.perform(
+                get("/game/getByIdWithPlayers?id={id}", 20L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(true))
+                .andExpect(jsonPath("$.data[0].name").value("testInsert"))
+                .andExpect(jsonPath("$.data[0].players[0].id").value(1L));
+    }
+
+    @Test
     public void shouldQueryUnexistantGame() throws Exception {
         mockMvc.perform(
                 get("/game/get-by-name?name={name}", "blablablablablabla"))

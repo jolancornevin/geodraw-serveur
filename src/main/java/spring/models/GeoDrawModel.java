@@ -86,7 +86,7 @@ public class GeoDrawModel {
         }
 
         Client a = new Client("localhost", 8080);
-        c.sendMessage(new NewGame("patate", false, 15, 5, 2, "Les avions", "franck"));
+        //c.sendMessage(new NewGame("patate", false, 15, 5, 2, "Les avions", "franck"));
 
         c.disconnect();
         s.stop();

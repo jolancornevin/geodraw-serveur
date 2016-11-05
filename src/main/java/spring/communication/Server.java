@@ -2,10 +2,10 @@ package spring.communication;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
+import javassist.tools.web.BadHttpRequest;
 import spring.communication.message.*;
 import spring.models.Game;
 import spring.models.GameInfo;
-import spring.models.LatLng;
 import spring.utils.Connexion;
 import spring.utils.Utils;
 
@@ -46,7 +46,7 @@ public class Server extends Side {
 
     public void start() {
         //TODO : load live elements from database
-        for(Game game : Connexion.getInstance().getGameController().getAllWithPlayers()) {
+        for (Game game : Connexion.getInstance().getGameController().getAllWithPlayers()) {
             currentGamesList.put(game.getId(), game);
         }
 
@@ -168,8 +168,8 @@ public class Server extends Side {
         @Override
         public void notifyBreakdownObserver(SafeSocket sock, boolean intended) {
             sockets.remove(sock);
-            for(List<SafeSocket> l : gameSubscribers.values())
-            	l.remove(sock);
+            for (List<SafeSocket> l : gameSubscribers.values())
+                l.remove(sock);
         }
 
     }
@@ -203,28 +203,28 @@ public class Server extends Side {
         if (!currentGamesList.containsKey(m.getGameID()))
             sendMessageTo(sender, new JoinedGame(false));
 
-        Game g = currentGamesList.get(m.getGameID());
-
         subscribeToGame(sender, m.getGameID());
 
-        boolean joined = false;
-        
         if (m.isObserver()) {
-        	joined = true;
+            //TODO à remplacer pour que ça fonctionne
+            sendMessageTo(sender, new JoinedGame(true));
+        } else {
+            boolean joined = joinGameInBd(m.getGameID(), m.getPlayerID());
+
             sendMessageTo(sender, new JoinedGame(joined));
         }
-        /*else {
-        	joined = g.addPlayer(m.getPlayerID());
-            sendMessageTo(sender, new JoinedGame(joined));
-        }*/
-        
-        if(joined) {
-        	g.getTrace(m.getPlayerID()).addLatLng(new LatLng(0, 0), false);
-        	sendMessageToGame(m.getGameID(), new AddLatLng(m.getPlayerID(), m.getGameID(), new LatLng(0, 0), false));
-        	sendMessageTo(sender, new GameUpdate(g));
+    }
+
+    private boolean joinGameInBd(Long gameId, Long playerId) {
+        boolean joined;
+        try {
+            Connexion.getInstance().getGameController().joinGame(gameId, playerId);
+            joined = true;
+        } catch (BadHttpRequest badHttpRequest) {
+            badHttpRequest.printStackTrace();
+            joined = false;
         }
-        
-        subscribeToGame(sender, m.getGameID());
+        return joined;
     }
 
     /**
@@ -235,16 +235,25 @@ public class Server extends Side {
         return;
     }
 
-
     @Override
     void HandleNewGame(NewGame m, SafeSocket sender) {
-        Long gID = id++;
-
         Game g = new Game(m.getName(), m.isLock(), m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme(), false);
-        //TODO à remplacer par le player
-        //g.addPlayer(m.getPlayerID());
-        currentGamesList.put(gID, g);
-        subscribeToGame(sender, gID);
+
+        //Create the game in the database
+        try {
+            Connexion.getInstance().getGameController().create(g);
+        } catch (BadHttpRequest badHttpRequest) {
+            badHttpRequest.printStackTrace();
+            //TODO return error
+        }
+
+        //Join the game
+        if (joinGameInBd(g.getId(), m.getPlayerID())) {
+            currentGamesList.put(g.getId(), g);
+            subscribeToGame(sender, g.getId());
+        } else {
+            //TODO return error
+        }
     }
 
     private void subscribeToGame(SafeSocket s, Long gameID) {

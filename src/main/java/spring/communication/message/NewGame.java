@@ -9,9 +9,9 @@ public class NewGame extends Message {
     private final int hoursDur;
     private final String theme;
 
-    private final String playerID;
+    private final Long playerID;
 
-    public NewGame(String name, boolean lock, int maxNbPlayer, int hours, int min, String theme, String playerID) {
+    public NewGame(String name, boolean lock, int maxNbPlayer, int hours, int min, String theme, Long playerID) {
         super(Type.NEWGAME);
         this.name = name;
         this.lock = lock;
@@ -47,7 +47,7 @@ public class NewGame extends Message {
         return theme;
     }
 
-    public String getPlayerID() {
+    public Long getPlayerID() {
         return playerID;
     }
 }

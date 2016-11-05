@@ -13,6 +13,7 @@ import spring.models.Player;
 import spring.models.Trace;
 import spring.utils.HttpResponseOk;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import java.util.Map;
  * Created by Djowood on 25/10/2016.
  */
 @Controller
+@Transactional
 public class GameController extends GeneriqueController {
 
     // Private fields
@@ -40,14 +42,17 @@ public class GameController extends GeneriqueController {
     @PostMapping(path = "/game/create", produces = "application/json", consumes = "application/json")
     @ResponseBody
     @ResponseStatus(value = HttpStatus.CREATED)
-    public HttpResponseOk<Game> create(@RequestBody Game game)
+    public HttpResponseOk<Game> _create(@RequestBody Game game)
             throws BadHttpRequest {
-        if (game == null)
-            throw new BadHttpRequest();
-
-        game = gameDao.save(game);
+        game = create(game);
 
         return new HttpResponseOk<>(game);
+    }
+
+    public Game create(Game game) throws BadHttpRequest {
+        if (game == null) throw new BadHttpRequest();
+
+        return gameDao.save(game);
     }
 
     /**
@@ -103,18 +108,49 @@ public class GameController extends GeneriqueController {
         return new HttpResponseOk<>(games);
     }
 
+    /**
+     * GET /getAllWithPlayers
+     */
+    @GetMapping(path = "/game/getAllWithPlayers", produces = "application/json")
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
+    public HttpResponseOk<List<Game>> _getAllWithPlayers() throws BadHttpRequest {
+        List<Game> games = getAllWithPlayers();
+
+        return new HttpResponseOk<>(games);
+    }
+
+    /**
+     * GET /getAllWithPlayers
+     */
+    @GetMapping(path = "/game/getByIdWithPlayers", produces = "application/json")
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
+    public HttpResponseOk<List<Game>> _getByIdWithPlayers(Long id) throws BadHttpRequest {
+        List<Game> games = getByIdWithPlayers(id);
+
+        return new HttpResponseOk<>(games);
+    }
+
     @PostMapping(path = "/game/joinGame", produces = "application/json", consumes = "application/json")
     @ResponseBody
     @ResponseStatus(value = HttpStatus.OK)
-    public HttpResponseOk<Game> joinGame(@RequestBody Map<String, Long> json)
+    public HttpResponseOk<Game> _joinGame(@RequestBody Map<String, Long> json)
             throws BadHttpRequest, DataIntegrityViolationException {
-        Game game;
-        Player player;
         Long idGame, idPlayer;
 
         //Get params
         idGame = json.get("idGame");
         idPlayer = json.get("idPlayer");
+
+        Game game = joinGame(idGame, idPlayer);
+
+        return new HttpResponseOk<>(game);
+    }
+
+    public Game joinGame(Long idGame, Long idPlayer) throws BadHttpRequest {
+        Game game;
+        Player player;
 
         if (idGame == null || idPlayer == null) throw new BadHttpRequest();
 
@@ -129,9 +165,7 @@ public class GameController extends GeneriqueController {
 
         game.addPlayer(player);
 
-        game = gameDao.save(game);
-
-        return new HttpResponseOk<>(game);
+        return gameDao.save(game);
     }
 
     @PostMapping(path = "/game/leaveGame", produces = "application/json", consumes = "application/json")
@@ -180,5 +214,9 @@ public class GameController extends GeneriqueController {
     public Game getTraces(Game game) {
         game.getTraces();
         return game;
+    }
+
+    public List<Game> getByIdWithPlayers(Long id) {
+        return (List) gameDao.findByIdWithPlayer(id);
     }
 }

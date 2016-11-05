@@ -17,8 +17,8 @@ public abstract class Side {
     protected transient static int TIMEOUT = 500;
 
     public Side() {
-        mess = new LinkedList<MessageObserver>();
-        breakdown = new LinkedList<BreakdownObserver>();
+        mess = new LinkedList<>();
+        breakdown = new LinkedList<>();
         mess.add(new MessageManager(this));
     }
 
