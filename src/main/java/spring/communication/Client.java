@@ -10,8 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Client extends Side
-{
+public class Client extends Side {
     private SafeSocket socket;
     private final int port;
     private final String ip;
@@ -27,11 +26,10 @@ public class Client extends Side
     private boolean isStopped;
 
     static {
-        theClient = new Client("192.168.0.24",8080);
+        theClient = new Client("localhost", 8888);
     }
 
-    public Client(final String ip, final int port)
-    {
+    public Client(final String ip, final int port) {
         super();
         this.port = port;
         this.ip = ip;
@@ -51,15 +49,14 @@ public class Client extends Side
                 String msg = "";
                 boolean sent = true;
 
-                while(!isStopped){
+                while (!isStopped) {
 
-                    if(sent){
+                    if (sent) {
                         sent = false;
                         msg = messagePool.poll();
                     }
 
-                    if(msg== null || msg == "")
-                    {
+                    if (msg == null || msg == "") {
                         sent = true;
                         try {
                             Thread.sleep(500);
@@ -70,8 +67,8 @@ public class Client extends Side
                     }
 
                     try {
-                        if(socket != null)
-                            if(socket.sendMessage(msg))
+                        if (socket != null)
+                            if (socket.sendMessage(msg))
                                 sent = true;
                             else
                                 try {
@@ -79,8 +76,7 @@ public class Client extends Side
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                    }
-                    catch(Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -88,47 +84,37 @@ public class Client extends Side
         };
 
         msgSender.start();
-
     }
 
-
-    public void addListener(ClientListener cl){
+    public void addListener(ClientListener cl) {
         listeners.add(cl);
     }
-
 
     public void removeListener(ClientListener cl) {
         listeners.remove(cl);
     }
 
-    public boolean sendMessage(Message m)
-    {
+    public boolean sendMessage(Message m) {
         String jsonstr = Utils.gson.toJson(m);
 
         messagePool.offer(jsonstr);
 
         return true;
-		/*if(socket == null)
-			System.err.println("Error null socket!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		return socket.sendMessage(jsonstr);*/
     }
 
-    private boolean sendMsg(String msg)
-    {
+    private boolean sendMsg(String msg) {
         return socket.sendMessage(msg);
     }
 
-    public void disconnect()
-    {
+    public void disconnect() {
         isStopped = true;
-        if(socket != null)
+        if (socket != null)
             socket.disconnect();
     }
 
-    private void connect()
-    {
+    private void connect() {
         connector = new Thread("Connector") {
-            public void run(){
+            public void run() {
                 socket = null;
                 while (socket == null && !isStopped)
                     try {
@@ -141,94 +127,88 @@ public class Client extends Side
         connector.start();
     }
 
-    private void reconnect()
-    {
+    private void reconnect() {
         connect();
     }
 
-    class ClientBreak implements BreakdownObserver
-    {
+    class ClientBreak implements BreakdownObserver {
 
         @Override
         public void notifyBreakdownObserver(SafeSocket arg0, boolean intended) {
-            if(!intended)
+            if (!intended)
                 reconnect();
         }
-
     }
-
 
     void HandleTraceMessage(TraceMessage m, SafeSocket sender) {
-        //System.out.println(Utils.gson.toJson(m.getTrace()));
-        //Utils.gson.toJson(m.getTrace());
-
-        for(ClientListener cl : listeners) {
+        for (ClientListener cl : listeners) {
             cl.HandleTraceMessage(m, sender);
         }
-
     }
-
 
     void HandleGameList(GameList m, SafeSocket sender) {
         // TODO Auto-generated method stub
-        for(ClientListener cl : listeners) {
+        for (ClientListener cl : listeners) {
             cl.HandleGameList(m, sender);
         }
     }
 
+    /**
+     * Server method
+     */
+    void HandleGameListRequest(GameListRequest m, SafeSocket sender) {
+        return;
+    }
 
-    /** Server method*/
-
-    void HandleGameListRequest(GameListRequest m, SafeSocket sender) {return;}
-
-
-    /** Server method*/
-
-    void HandleJoinGame(JoinGame m, SafeSocket sender) {return;}
-
+    /**
+     * Server method
+     */
+    void HandleJoinGame(JoinGame m, SafeSocket sender) {
+        return;
+    }
 
     @Override
     void HandleJoinedGame(JoinedGame m, SafeSocket sender) {
         // TODO Auto-generated method stub
-        for(ClientListener cl : listeners) {
+        for (ClientListener cl : listeners) {
             cl.HandleJoinedGame(m, sender);
         }
     }
 
-    /** Server method*/
+    /**
+     * Server method
+     */
     @Override
-    void HandleNewGame(NewGame m, SafeSocket sender) {return;}
-
+    void HandleNewGame(NewGame m, SafeSocket sender) {
+        return;
+    }
 
 
     @Override
     void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
         // TODO Auto-generated method stub
-        for(ClientListener cl : listeners) {
+        for (ClientListener cl : listeners) {
             cl.HandleAddLatLng(m, sender);
         }
     }
 
 
-
     @Override
     void HandleGameUpdate(GameUpdate m, SafeSocket sender) {
         // TODO Auto-generated method stub
-        for(ClientListener cl : listeners) {
+        for (ClientListener cl : listeners) {
             cl.HandleGameUpdate(m, sender);
         }
     }
 
 
-
     @Override
     void HandleVote(Vote m, SafeSocket sender) {
         // TODO Auto-generated method stub
-        for(ClientListener cl : listeners) {
+        for (ClientListener cl : listeners) {
             cl.HandleVote(m, sender);
         }
     }
-
 
 
 }
