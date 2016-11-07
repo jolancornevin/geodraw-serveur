@@ -35,11 +35,11 @@ public class Game {
         Calendar c = Calendar.getInstance();
         this.startDate = c.getTime();
 
-        endDate = null;
 
         c.add(Calendar.HOUR, hours);
         c.add(Calendar.MINUTE, minutes);
 
+        endDate = c.getTime();
         this.id = id;
 
         players = new HashMap<>();
