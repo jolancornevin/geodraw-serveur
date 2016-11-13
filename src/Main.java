@@ -36,9 +36,6 @@ public class Main {
 		Thread.sleep(100);
 		
 		Client fakeClient = new Client("localhost", port);
-		fakeClient.sendMessage(new NewGame("coin", false, 15, 1, 5, "Avion", "player1"));
-		fakeClient.sendMessage(new NewGame("bam", false, 15, 1, 5, "Moteur", "player1"));
-		fakeClient.sendMessage(new NewGame("bamm", false, 15, 1, 5, "Moteur", "player2"));
 		
 		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(System.in);
@@ -60,7 +57,7 @@ public class Main {
 				Thread.sleep(100);
 				return;
 			}
-			else if(cmds[0].equals("listGames"))
+			else if(cmds[0].equals("ls"))
 				if(cmds.length > 1)
 				{
 					String playerID = cmds[1];
@@ -69,6 +66,15 @@ public class Main {
 				else
 					fakeClient.sendMessage(new GameListRequest());
 			
+			else if(cmds[0].equals("new")) {
+				if(cmds.length < 3)
+				{
+					System.out.println(Color.RED + " Error : usage : new <name> <theme>" + Color.RESET);
+					continue;
+				}
+					
+				fakeClient.sendMessage(new NewGame(cmds[1], false, 15, 1, 0, cmds[2], "fakePlayer"));
+			}
 			else if(cmd.equals(""))
 				continue;
 			else
@@ -85,9 +91,10 @@ public class Main {
 	
 	private static void showCmdHelp()
 	{
-		System.out.println("help					Affiche l'aide");
-		System.out.println("stop					Arrête le serveur");
-		System.out.println("listGames				Affiche la liste des parties en cours");
-		System.out.println("listGames <playerID>	Affiche la liste des parties en cours du joueur <playerID>");
+		System.out.println("help				Affiche l'aide");
+		System.out.println("stop				Arrête le serveur");
+		System.out.println("ls					Affiche la liste des parties en cours");
+		System.out.println("ls <playerID>		Affiche la liste des parties en cours du joueur <playerID>");
+		System.out.println("new <name> <theme>	Crée une nouvelle partie");
 	}
 }
