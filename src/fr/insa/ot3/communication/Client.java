@@ -63,6 +63,7 @@ public class Client extends Side {
     @Override
     void HandleGameList(GameList m, SafeSocket sender) {
         // TODO Auto-generated method stub
+    	System.out.println(Utils.gson.toJson(m));
 
     }
 
@@ -81,6 +82,7 @@ public class Client extends Side {
      */
     @Override
     void HandleJoinGame(JoinGame m, SafeSocket sender) {
+    	System.out.println(Utils.gson.toJson(m));
         return;
     }
 
@@ -89,6 +91,7 @@ public class Client extends Side {
     void HandleJoinedGame(JoinedGame m, SafeSocket sender) {
         // TODO Auto-generated method stub
 
+    	System.out.println(Utils.gson.toJson(m));
     }
 
     /**
@@ -96,6 +99,7 @@ public class Client extends Side {
      */
     @Override
     void HandleNewGame(NewGame m, SafeSocket sender) {
+    	System.out.println(Utils.gson.toJson(m));
         return;
     }
 
@@ -103,6 +107,7 @@ public class Client extends Side {
     @Override
     void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
         // TODO Auto-generated method stub
+    	System.out.println(Utils.gson.toJson(m));
 
     }
 
@@ -110,6 +115,7 @@ public class Client extends Side {
     @Override
     void HandleGameUpdate(GameUpdate m, SafeSocket sender) {
         // TODO Auto-generated method stub
+    	System.out.println(Utils.gson.toJson(m));
 
     }
 
@@ -117,6 +123,7 @@ public class Client extends Side {
     @Override
     void HandleVote(Vote m, SafeSocket sender) {
         // TODO Auto-generated method stub
+    	System.out.println(Utils.gson.toJson(m));
 
     }
 

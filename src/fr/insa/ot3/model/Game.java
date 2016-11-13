@@ -78,6 +78,8 @@ public class Game {
         if (currentNbPlayer < maxNbPlayer) {
             if (players.containsKey(playerID))
                 return true;
+            
+            traces.put(playerID, new Drawing());
             players.put(playerID, 0);
             currentNbPlayer++;
             return true;

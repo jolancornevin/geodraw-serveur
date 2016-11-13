@@ -28,7 +28,7 @@ public class Server extends Side {
 
     private int id = 0;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         System.out.println("Debut du serveur");
 
         Server s;
@@ -42,10 +42,29 @@ public class Server extends Side {
 
         s.start();
 
+        
+        Thread.sleep(300);
+        
+        Client c = new Client("localhost", 8080);
+        
+        c.sendMessage(new NewGame("avions", false, 15, 5, 0, "Les avions", "player1"));
+
+        Thread.sleep(50);
+
+        Client c2 = new Client("localhost", 8080);
+        
+        c.sendMessage(new GameListRequest());
+        c2.sendMessage(new JoinGame("player2", 0));
+        c.sendMessage(new JoinGame("player", 0));
+        
+        c.sendMessage(new AddLatLng("player", 0, new LatLng(5, 5), true));
+        
         @SuppressWarnings("resource")
         Scanner sc = new Scanner(System.in);
         sc.nextLine();
 
+        c.disconnect();
+        c2.disconnect();
         s.stop();
 
         String serverSave = Utils.gson.toJson(s);
@@ -139,7 +158,7 @@ public class Server extends Side {
                     }
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;
@@ -155,7 +174,7 @@ public class Server extends Side {
             interrupted = true;
             gameCleaner.interrupt();
             Client c = new Client("localhost", 8080);
-            Thread.sleep(500);
+            Thread.sleep(100);
             c.disconnect();
             servSock.close();
             socketCreator.join();
@@ -274,6 +293,7 @@ public class Server extends Side {
         Game g = new Game(gID, m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme());
         g.addPlayer(m.getPlayerID());
         gameList.put(gID, g);
+        System.out.println("1NG:" + Utils.gson.toJson(gameList));
 
     	sendMessageTo(sender, new GameUpdate(g));
         subscribeToGame(sender, gID);
@@ -291,8 +311,8 @@ public class Server extends Side {
 
     @Override
     void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
-        System.out.println(Utils.gson.toJson(m));
         sendMessageToGame(m.getGameID(), m);
+
         gameList.get(m.getGameID()).getTrace(m.getUserID()).addLatLng(m.getLatLng(), m.isDrawing());
     }
 
