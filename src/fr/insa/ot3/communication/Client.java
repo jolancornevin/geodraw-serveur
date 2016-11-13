@@ -2,7 +2,9 @@ package fr.insa.ot3.communication;
 
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
+
 import fr.insa.ot3.communication.message.*;
+import fr.insa.ot3.model.GameInfo;
 import fr.insa.ot3.utils.Utils;
 
 import java.io.IOException;
@@ -32,7 +34,8 @@ public class Client extends Side {
     }
 
     public void disconnect() {
-        socket.disconnect();
+    	if(socket != null && socket.isSocketAlive())
+    		socket.disconnect();
     }
 
     private void reconnect() {
@@ -55,16 +58,19 @@ public class Client extends Side {
 
     @Override
     void HandleTraceMessage(TraceMessage m, SafeSocket sender) {
-        System.out.println(Utils.gson.toJson(m.getTrace()));
+//        System.out.println(Utils.gson.toJson(m.getTrace()));
 
     }
 
 
     @Override
     void HandleGameList(GameList m, SafeSocket sender) {
-        // TODO Auto-generated method stub
-    	System.out.println(Utils.gson.toJson(m));
+    	System.out.println("Liste des parties:");
 
+    	System.out.println("\t" + GameInfo.header());
+    	
+    	for(GameInfo g : m.getGames())
+    		System.out.println("\t" + g);
     }
 
 
@@ -91,7 +97,7 @@ public class Client extends Side {
     void HandleJoinedGame(JoinedGame m, SafeSocket sender) {
         // TODO Auto-generated method stub
 
-    	System.out.println(Utils.gson.toJson(m));
+//    	System.out.println(Utils.gson.toJson(m));
     }
 
     /**
@@ -99,7 +105,7 @@ public class Client extends Side {
      */
     @Override
     void HandleNewGame(NewGame m, SafeSocket sender) {
-    	System.out.println(Utils.gson.toJson(m));
+//    	System.out.println(Utils.gson.toJson(m));
         return;
     }
 
@@ -107,7 +113,7 @@ public class Client extends Side {
     @Override
     void HandleAddLatLng(AddLatLng m, SafeSocket sender) {
         // TODO Auto-generated method stub
-    	System.out.println(Utils.gson.toJson(m));
+//    	System.out.println(Utils.gson.toJson(m));
 
     }
 
@@ -115,7 +121,7 @@ public class Client extends Side {
     @Override
     void HandleGameUpdate(GameUpdate m, SafeSocket sender) {
         // TODO Auto-generated method stub
-    	System.out.println(Utils.gson.toJson(m));
+//    	System.out.println(Utils.gson.toJson(m));
 
     }
 
@@ -123,7 +129,7 @@ public class Client extends Side {
     @Override
     void HandleVote(Vote m, SafeSocket sender) {
         // TODO Auto-generated method stub
-    	System.out.println(Utils.gson.toJson(m));
+//    	System.out.println(Utils.gson.toJson(m));
 
     }
 

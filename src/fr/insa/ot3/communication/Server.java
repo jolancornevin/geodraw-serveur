@@ -1,19 +1,31 @@
 package fr.insa.ot3.communication;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import com.m5c.safesockets.BreakdownObserver;
 import com.m5c.safesockets.SafeSocket;
 
-import fr.insa.ot3.communication.message.*;
+import fr.insa.ot3.communication.message.AddLatLng;
+import fr.insa.ot3.communication.message.GameList;
+import fr.insa.ot3.communication.message.GameListRequest;
+import fr.insa.ot3.communication.message.GameUpdate;
+import fr.insa.ot3.communication.message.JoinGame;
+import fr.insa.ot3.communication.message.JoinedGame;
+import fr.insa.ot3.communication.message.Message;
+import fr.insa.ot3.communication.message.NewGame;
+import fr.insa.ot3.communication.message.TraceMessage;
+import fr.insa.ot3.communication.message.Vote;
 import fr.insa.ot3.model.Game;
 import fr.insa.ot3.model.GameInfo;
 import fr.insa.ot3.model.LatLng;
+import fr.insa.ot3.utils.Color;
 import fr.insa.ot3.utils.Utils;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.nio.charset.Charset;
-import java.util.*;
 
 public class Server extends Side {
     private transient List<SafeSocket> sockets;
@@ -28,60 +40,7 @@ public class Server extends Side {
 
     private int id = 0;
 
-    public static void main(String[] args) throws InterruptedException {
-        System.out.println("Debut du serveur");
-
-        Server s;
-
-        try {
-            String serverSave = Utils.readFile("./server.json", Charset.defaultCharset());
-            s = Utils.gson.fromJson(serverSave, Server.class);
-        } catch (Exception e) {
-            s = new Server();
-        }
-
-        s.start();
-
-        
-        Thread.sleep(300);
-        
-        Client c = new Client("localhost", 8080);
-        
-        c.sendMessage(new NewGame("avions", false, 15, 5, 0, "Les avions", "player1"));
-
-        Thread.sleep(50);
-
-        Client c2 = new Client("localhost", 8080);
-        
-        c.sendMessage(new GameListRequest());
-        c2.sendMessage(new JoinGame("player2", 0));
-        c.sendMessage(new JoinGame("player", 0));
-        
-        c.sendMessage(new AddLatLng("player", 0, new LatLng(5, 5), true));
-        
-        @SuppressWarnings("resource")
-        Scanner sc = new Scanner(System.in);
-        sc.nextLine();
-
-        c.disconnect();
-        c2.disconnect();
-        s.stop();
-
-        String serverSave = Utils.gson.toJson(s);
-
-        PrintWriter writer;
-        try {
-            writer = new PrintWriter("./server.json", "UTF-8");
-            writer.print(serverSave);
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Fin du serveur");
-    }
-
-    public Server() {
+    public Server(int port) {
         super();
 
         gameList = new HashMap<Integer, Game>();
@@ -92,11 +51,14 @@ public class Server extends Side {
         breakdown.add(new ServerBreak());
 
         try {
-            servSock = new ServerSocket(8080);
+            servSock = new ServerSocket(port);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+    }
+    
+    public Server() {
+    	this(8080);
     }
 
     public List<GameInfo> getGameList() {
@@ -167,15 +129,14 @@ public class Server extends Side {
             }
         };
         gameCleaner.start();
+
+		System.out.println(Color.CYAN + " Server started!" + Color.RESET);
     }
 
     public void stop() {
         try {
             interrupted = true;
             gameCleaner.interrupt();
-            Client c = new Client("localhost", 8080);
-            Thread.sleep(100);
-            c.disconnect();
             servSock.close();
             socketCreator.join();
         } catch (InterruptedException e) {
@@ -184,7 +145,7 @@ public class Server extends Side {
             e.printStackTrace();
         }
 
-        System.err.println("Server stopped");
+        System.out.println(Color.CYAN + "Server stopped" + Color.RESET);
     }
 
     public void sendMessageToAll(Message m) {
@@ -293,7 +254,6 @@ public class Server extends Side {
         Game g = new Game(gID, m.getName(), m.isLock(), 0, m.getMaxNbPlayer(), m.getHours(), m.getMins(), m.getTheme());
         g.addPlayer(m.getPlayerID());
         gameList.put(gID, g);
-        System.out.println("1NG:" + Utils.gson.toJson(gameList));
 
     	sendMessageTo(sender, new GameUpdate(g));
         subscribeToGame(sender, gID);

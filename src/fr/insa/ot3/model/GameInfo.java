@@ -86,4 +86,19 @@ public class GameInfo {
     public String getTheme() {
         return theme;
     }
+    
+    public String toString() {
+    	String str = "";
+    	str += getName() + "\t|\t";
+    	str += getLock() + "\t|\t";
+    	str += getCurrentNbPlayer() + "/" + getMaxNbPlayer() + "\t|\t";
+    	str += getRemainingHours() + "h" + getRemainingMinutes() + "/" + getMaxHours() + "h" + getMaxMinutes() + "\t|\t";
+    	str += getTheme();
+    	
+    	return str;
+    }
+    
+    public static String header() {
+    	return "Nom	|	Locked	|	players/max	|	restant/tps max	|	Thème";
+    }
 }
